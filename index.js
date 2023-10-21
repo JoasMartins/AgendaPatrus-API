@@ -610,15 +610,13 @@ api.delete("/markedtasks", async (req, res) => {
 api.post("/scores/taskscompleted", async (req, res) => {
     //  adiciona +1 na contagem de tarefas feitas para um usuário
     let dataReq = req.body
-    console.log(req.body)
-    console.log(req.query)
 
     let dadosNecessarios = {
         score: dataReq.score || +1, // quantidade de contagem a modificar
         _id: "" // ID do usuário a modificar
     }
 
-    await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: 1 } })
+    await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: dataReq.score || +1 } })
     .then((data) => { res.status(200).json(data) })
     .catch((err) => { res.status(400).json(err) })
 })
