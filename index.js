@@ -610,6 +610,8 @@ api.delete("/markedtasks", async (req, res) => {
 api.post("/scores/taskscompleted", async (req, res) => {
     //  adiciona +1 na contagem de tarefas feitas para um usuário
     let dataReq = req.body
+    console.log(req.body)
+    console.log(req.query)
 
     let dadosNecessarios = {
         score: dataReq.score || +1, // quantidade de contagem a modificar
