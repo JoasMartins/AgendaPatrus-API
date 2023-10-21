@@ -617,8 +617,8 @@ api.post("/scores/taskscompleted", async (req, res) => {
     }
 
     await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: dataReq.score || +1 } })
-    .then((data) => { res.status(200).json(data) })
-    .catch((err) => { res.status(400).json(err) })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
 })
 
 api.delete("/scores/taskscompleted", async (req, res) => {
@@ -631,8 +631,8 @@ api.delete("/scores/taskscompleted", async (req, res) => {
     }
 
     await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: dataReq.score || -1 } })
-    .then((data) => { res.status(200).json(data) })
-    .catch((err) => { res.status(400).json(err) })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
 })
 
 api.post("/scores/tasksassigned/users", async (req, res) => {
@@ -640,6 +640,8 @@ api.post("/scores/tasksassigned/users", async (req, res) => {
     let dataReq = req.body
 
     await modelUsers.updateMany({ turma: dataReq.turma }, { $inc: { tasksAtribuidas: dataReq.score || +1 } })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
 
     /* DADOS NECESSÁRIOS:
     turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
@@ -741,3 +743,9 @@ api.put("/markedtasks", async (req, res) => {
 })
 
 */
+
+api.post("/addnewvalues", async (req, res) => {
+    await modelUsers.updateMany({}, { $set: { tasksAtribuidas: 0, tasksFeitas: 0 } })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
+})
