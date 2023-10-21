@@ -231,6 +231,8 @@ var schemaUsers = new mongoose.Schema({
             default: false
         },
     },
+    tasksAtribuidas: Number,
+    tasksFeitas: Number,
     id: {
         type: Number,
         default: 0
@@ -485,6 +487,8 @@ api.post("/users", async (req, res) => {
         email: userData.email || "",
         password: userData.password || "",
         turma: userData.turma || null,
+        tasksAtribuidas: 0,
+        tasksFeitas: 0
     }
 
     new modelUsers(modelSendUser).save()
@@ -600,6 +604,42 @@ api.delete("/markedtasks", async (req, res) => {
         .catch((err) => { return res.status(400).json(err) })
 })
 
+// |||||====||||| ------------------ |||||====|||||
+
+// |||||====||||| contagem de tarefas por user |||||====|||||
+api.post("/scores/taskscompleted", async (req, res) => {
+    let dataReq = req.body
+
+    let dadosNecessarios = {
+        score: dataReq.score || +1, // quantidade de contagem a modificar
+        _id: "" // ID do usuário a modificar
+    }
+
+    await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: 1 } })
+    .then((data) => { res.status(200).json(data) })
+    .catch((err) => { res.status(400).json(err) })
+    //  adiciona +1 na contagem de tarefas feitas para um usuário
+})
+
+api.delete("/scores/taskscompleted", async (req, res) => {
+    //  remove -1 na contagem de tarefas feitas para um usuário
+})
+
+api.post("/scores/tasksassigned/users", async (req, res) => {
+    //  adiciona +1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
+})
+
+api.delete("/scores/tasksassigned/users", async (req, res) => {
+    //  remove -1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
+})
+
+api.post("/scores/tasksassigned/turma", async (req, res) => {
+    //  adiciona +1 na contagem de tarefas atribuidas para uma turma
+})
+
+api.delete("/scores/tasksassigned/turma", async (req, res) => {
+    //  remove -1 na contagem de tarefas atribuidas para uma turma
+})
 // |||||====||||| ------------------ |||||====|||||
 
 // |||||====||||| dispositivos |||||====|||||
