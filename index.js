@@ -626,17 +626,25 @@ api.delete("/scores/taskscompleted", async (req, res) => {
     let dataReq = req.body
 
     let dadosNecessarios = {
-        score: dataReq.score || +1, // quantidade de contagem a modificar
+        score: dataReq.score || -1, // quantidade de contagem a modificar
         _id: "" // ID do usuário a modificar
     }
 
-    await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: -1 } })
+    await modelUsers.findOneAndUpdate({ _id: dataReq._id }, { $inc: { tasksFeitas: dataReq.score || -1 } })
     .then((data) => { res.status(200).json(data) })
     .catch((err) => { res.status(400).json(err) })
 })
 
 api.post("/scores/tasksassigned/users", async (req, res) => {
     //  adiciona +1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
+    let dataReq = req.body
+
+    await modelUsers.updateMany({ turma: dataReq.turma }, { $inc: { tasksAtribuidas: dataReq.score || +1 } })
+
+    /* DADOS NECESSÁRIOS:
+    turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
+    score - NUMBER - quantidade da vlor a modificar (opcional)
+    */
 })
 
 api.delete("/scores/tasksassigned/users", async (req, res) => {
