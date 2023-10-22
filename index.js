@@ -579,11 +579,21 @@ api.delete("/markedtasks", async (req, res) => {
         contentFind = req.query
     }
 
+    console.log(contentFind)
     var taskSearch = {}
-    var taskSearch = await modelMarkedTasks.findOne(contentFind)
-    if(!taskSearch) {
+
+    if (contentFind.id_task) {
+        taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.id_task })
+    } else if (contentFind.id_user) {
+        taskSearch = await modelMarkedTasks.findOne({ id_user: contentFind.id_user })
+    } else if (contentFind.timestamp) {
+        taskSearch = await modelMarkedTasks.findOne({ timestamp: contentFind.timestamp })
+    } else if (contentFind.id) {
+        taskSearch = await modelMarkedTasks.findOne({ id: contentFind.id })
+    } else {
         return res.status(400).json(null)
     }
+    console.log(taskSearch)
 
     let idDelete = taskSearch?._id
     if (!idDelete) return res.status(400).json(null)
@@ -592,7 +602,7 @@ api.delete("/markedtasks", async (req, res) => {
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 
-    modelMarkedTasks.deleteOne({ _id: idDelete })
+    modelMarkedTasks.deleteOne({ id: idDelete })
         .then((data) => { return res.status(200).json(data) })
         .catch((err) => { return res.status(400).json(err) })
 })
