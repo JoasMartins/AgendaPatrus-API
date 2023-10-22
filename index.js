@@ -446,18 +446,11 @@ api.get("/users/verify", async (req, res) => {
 
 api.get("/users", async (req, res) => {
     let userData = req.query
-
-    if (userData.fullname) {
-        let userSearch = await modelUsers.findOne({ fullname: userData.fullname })
-        return res.status(200).json(userSearch)
-    } else if (userData.email) {
-        let userSearch = await modelUsers.findOne({ email: userData.email })
-        return res.status(200).json(userSearch)
-    } else {
-        return res.status(200).json(null)
-    }
-
+    await modelUsers.findOne(userData)
+        .then((data) => { return res.status(200).json(data) })
+        .catch((err) => { return res.status(400).json(err) })
 })
+
 api.get("/users/several", async (req, res) => {
     var contentFind = req.body
     if (Object.keys(contentFind).length === 0) {
@@ -607,18 +600,19 @@ api.delete("/markedtasks", async (req, res) => {
 // |||||====||||| ------------------ |||||====|||||
 
 // |||||====||||| contagem de tarefas por user |||||====|||||
+/*
 api.get("/scores/taskscompleted", async (req, res) => {
     //  pega a contagem de tarefas feitas de um usuário
     let dataReq = req.body
 
-    await modelUsers.findOne({ _id: dataReq._id })
+    await modelUsers.findOne(dataReq)
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 
     /* DADOS NECESSÁRIOS:
     _id - STRING - ID padrão MongoDB do usuário desejado
-    */
 })
+*/
 
 api.post("/scores/taskscompleted", async (req, res) => {
     //  adiciona +1 na contagem de tarefas feitas para um usuário
@@ -648,6 +642,7 @@ api.delete("/scores/taskscompleted", async (req, res) => {
         .catch((err) => { res.status(400).json(err) })
 })
 
+/*
 api.get("/scores/tasksassigned/user", async (req, res) => {
     //  pega a contagem de tarefas atribuidas para UM usuário
     let dataReq = req.body
@@ -658,8 +653,8 @@ api.get("/scores/tasksassigned/user", async (req, res) => {
 
     /* DADOS NECESSÁRIOS:
     _id - STRING - ID padrão MongoDB do usuário desejado
-    */
 })
+*/
 
 api.post("/scores/tasksassigned/users", async (req, res) => {
     //  adiciona +1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
