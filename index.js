@@ -591,6 +591,8 @@ api.delete("/markedtasks", async (req, res) => {
         taskSearch = await modelMarkedTasks.findOne({ timestamp: contentFind.timestamp })
     } else if (contentFind.id) {
         taskSearch = await modelMarkedTasks.findOne({ id: contentFind.id })
+    } else if (contentFind._id) {
+        taskSearch = await modelMarkedTasks.findOne({ _id: contentFind._id })
     } else {
         return res.status(400).json(null)
     }
