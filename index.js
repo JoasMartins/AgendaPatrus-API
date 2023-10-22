@@ -563,7 +563,7 @@ api.post("/markedtasks", async (req, res) => {
         timestamp: Date.now()
     }
 
-    await modelUsers.findOneAndUpdate({ id: taskData.id }, { $inc: { tasksFeitas: taskData.score || +1 } })
+    await modelUsers.findOneAndUpdate({ _id: taskData._id }, { $inc: { tasksFeitas: taskData.score || +1 } })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 
