@@ -563,12 +563,13 @@ api.post("/markedtasks", async (req, res) => {
         timestamp: Date.now()
     }
 
-    await modelUsers.findOneAndUpdate({ _id: taskData._id }, { $inc: { tasksFeitas: taskData.score || +1 } })
-        .then((data) => { res.status(200).json(data) })
-        .catch((err) => { res.status(400).json(err) })
+
 
     new modelMarkedTasks(objectSend).save()
-        .then((data) => { return res.status(200).json(data) })
+        .then(async (data) => {
+            await modelUsers.findOneAndUpdate({ _id: taskData._id }, { $inc: { tasksFeitas: taskData.score || +1 } })
+            return res.status(200).json(data)
+        })
         .catch((err) => { return res.status(400).json(err) })
 
 })
@@ -598,12 +599,13 @@ api.delete("/markedtasks", async (req, res) => {
     let idDelete = taskSearch?._id
     if (!idDelete) return res.status(400).json(null)
 
-    await modelUsers.findOneAndUpdate({ _id: idDelete }, { $inc: { tasksFeitas: contentFind.score || -1 } })
-        .then((data) => { res.status(200).json(data) })
-        .catch((err) => { res.status(400).json(err) })
+
 
     modelMarkedTasks.deleteOne({ id: idDelete })
-        .then((data) => { return res.status(200).json(data) })
+        .then(async (data) => {
+            await modelUsers.findOneAndUpdate({ _id: idDelete }, { $inc: { tasksFeitas: contentFind.score || -1 } })
+            return res.status(200).json(data)
+        })
         .catch((err) => { return res.status(400).json(err) })
 })
 
