@@ -580,23 +580,19 @@ api.delete("/markedtasks", async (req, res) => {
     }
 
     var taskSearch = {}
-
-    if (contentFind.id_task) {
-        taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.id_task })
-    } else if (contentFind.id_user) {
-        taskSearch = await modelMarkedTasks.findOne({ id_user: contentFind.id_user })
-    } else if (contentFind.timestamp) {
-        taskSearch = await modelMarkedTasks.findOne({ timestamp: contentFind.timestamp })
-    } else if (contentFind.id) {
-        taskSearch = await modelMarkedTasks.findOne({ id: contentFind.id })
-    } else {
+    var taskSearch = await modelMarkedTasks.findOne(contentFind)
+    if(!taskSearch) {
         return res.status(400).json(null)
     }
 
-    let idDelete = taskSearch?.id
+    let idDelete = taskSearch?._id
     if (!idDelete) return res.status(400).json(null)
 
-    modelMarkedTasks.deleteOne({ id: idDelete })
+    await modelUsers.findOneAndUpdate({ _id: idDelete }, { $inc: { tasksFeitas: taskData.score || -1 } })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
+
+    modelMarkedTasks.deleteOne({ _id: idDelete })
         .then((data) => { return res.status(200).json(data) })
         .catch((err) => { return res.status(400).json(err) })
 })
