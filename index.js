@@ -607,6 +607,19 @@ api.delete("/markedtasks", async (req, res) => {
 // |||||====||||| ------------------ |||||====|||||
 
 // |||||====||||| contagem de tarefas por user |||||====|||||
+api.get("/scores/taskscompleted", async (req, res) => {
+    //  pega a contagem de tarefas feitas de um usuário
+    let dataReq = req.body
+
+    await modelUsers.findOne({ _id: dataReq._id })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
+
+    /* DADOS NECESSÁRIOS:
+    _id - STRING - ID padrão MongoDB do usuário desejado
+    */
+})
+
 api.post("/scores/taskscompleted", async (req, res) => {
     //  adiciona +1 na contagem de tarefas feitas para um usuário
     let dataReq = req.body
@@ -635,6 +648,19 @@ api.delete("/scores/taskscompleted", async (req, res) => {
         .catch((err) => { res.status(400).json(err) })
 })
 
+api.get("/scores/tasksassigned/user", async (req, res) => {
+    //  pega a contagem de tarefas atribuidas para UM usuário
+    let dataReq = req.body
+
+    await modelUsers.findOne({ _id: dataReq._id })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
+
+    /* DADOS NECESSÁRIOS:
+    _id - STRING - ID padrão MongoDB do usuário desejado
+    */
+})
+
 api.post("/scores/tasksassigned/users", async (req, res) => {
     //  adiciona +1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
     let dataReq = req.body
@@ -651,15 +677,18 @@ api.post("/scores/tasksassigned/users", async (req, res) => {
 
 api.delete("/scores/tasksassigned/users", async (req, res) => {
     //  remove -1 na contagem de tarefas atribuidas para TODOS usuários de uma turma
+    let dataReq = req.body
+
+    await modelUsers.updateMany({ turma: dataReq.turma }, { $inc: { tasksAtribuidas: dataReq.score || -1 } })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
+
+    /* DADOS NECESSÁRIOS:
+    turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
+    score - NUMBER - quantidade da vlor a modificar (opcional)
+    */
 })
 
-api.post("/scores/tasksassigned/turma", async (req, res) => {
-    //  adiciona +1 na contagem de tarefas atribuidas para uma turma
-})
-
-api.delete("/scores/tasksassigned/turma", async (req, res) => {
-    //  remove -1 na contagem de tarefas atribuidas para uma turma
-})
 // |||||====||||| ------------------ |||||====|||||
 
 // |||||====||||| dispositivos |||||====|||||
@@ -744,8 +773,10 @@ api.put("/markedtasks", async (req, res) => {
 
 */
 
+/*
 api.post("/addnewvalues", async (req, res) => {
     await modelUsers.updateMany({}, { $set: { tasksAtribuidas: 0, tasksFeitas: 0 } })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 })
+*/
