@@ -252,7 +252,7 @@ var schemaMarkedTasks = new mongoose.Schema({
 var schemaDevices = new mongoose.Schema({
     userId: String,
     email: String,
-    profileId: mongoose.Schema.Types.ObjectId,
+    profileId: String,
     id: {
         type: Number,
         default: 0
@@ -562,6 +562,10 @@ api.post("/markedtasks", async (req, res) => {
         id_user: taskData.id_user,
         timestamp: Date.now()
     }
+
+    await modelUsers.findOneAndUpdate({ id: taskData.id }, { $inc: { tasksFeitas: taskData.score || +1 } })
+        .then((data) => { res.status(200).json(data) })
+        .catch((err) => { res.status(400).json(err) })
 
     new modelMarkedTasks(objectSend).save()
         .then((data) => { return res.status(200).json(data) })
