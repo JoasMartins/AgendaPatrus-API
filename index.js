@@ -375,9 +375,18 @@ api.post("/tasks", async (req, res) => {
         turma: taskData.turma
     }
 
-    new modelTask(taskSend).save()
-        .then((data) => { return res.status(200).json(data) })
-        .catch((err) => { return res.status(400).json(err) })
+    try {
+        new modelTask(taskSend).save()
+        await modelUsers.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
+    }
+    catch (error) {
+        console.error(error)
+    }
+
+    /* DADOS NECESSÁRIOS:
+    turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
+    score - NUMBER - quantidade da vlor a modificar (opcional)
+    */
 })
 
 api.delete("/tasks", async (req, res) => {
@@ -662,7 +671,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
     if (Object.keys(contentFind).length === 0) {
         contentFind = req.query
     }
-    
+
 
     let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.task_id, id_user: contentFind.user_id })
 
