@@ -663,7 +663,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
         contentFind = req.query
     }
 
-    let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.markedtask_id })
+    let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.task_id })
     /*
     if(!taskSearch) {
         return res.status(400).json("'_id' da task inválida")
@@ -675,7 +675,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
 
     /* DADOS NECESSÁRIOS:
     user_id - STRING - "_id" (padrão MongoDB) do usuário desejado
-    markedtask_id - STRING - "_id" (padrão MongoDB) da task desejada
+    task_id - STRING - "_id" (padrão MongoDB) da task desejada
     score - NUMBER - valor a modificar na contagem (opcional)
     */
 })
