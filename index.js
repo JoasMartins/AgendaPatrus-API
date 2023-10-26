@@ -664,10 +664,13 @@ api.put("/scores/taskscompleted", async (req, res) => {
     }
 
     let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.task_id, id_user: contentFind.user_id })
+    console.log(taskSearch)
 
     if (taskSearch) {
+        console.log("DESMARCANDO...")
         //  DESMARCAR
         try {
+            console.log("DESMARCANDO...")
             await modelMarkedTasks.findOneAndDelete({ _id: taskSearch._id })
             await modelUsers.findOneAndUpdate({ _id: contentFind.user_id }, { $inc: { tasksFeitas: contentFind.score || -1 } })
             return res.status(200).json("Sucess!")
@@ -676,6 +679,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
             return res.status(400).json(error)
         }
     } else {
+        console.log("MARCANDO...")
         //  MARCAR
         let objectSend = {
             id_task: contentFind.task_id,
@@ -684,6 +688,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
         }
 
         try {
+            console.log("MARCANDO...")
             new modelMarkedTasks(objectSend).save()
             await modelUsers.findOneAndUpdate({ _id: contentFind.user_id }, { $inc: { tasksFeitas: contentFind.score || +1 } })
             return res.status(200).json("Sucess!")
