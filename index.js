@@ -665,7 +665,24 @@ api.put("/scores/taskscompleted", async (req, res) => {
 
     let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.task_id, id_user: contentFind.user_id })
 
-    return res.status(200).json(taskSearch)
+    if(taskSearch) {
+        //  DESMARCAR
+        
+    } else {
+        //  MARCAR
+        let objectSend = {
+            id_task: contentFind.task_id,
+            id_user: contentFind.user_id,
+            timestamp: Date.now()
+        }
+    
+        new modelMarkedTasks(objectSend).save()
+            .then(async (data) => {
+                await modelUsers.findOneAndUpdate({ _id: contentFind.user_id }, { $inc: { tasksFeitas: contentFind.score || +1 } })
+                return res.status(200).json(data)
+            })
+            .catch((err) => { return res.status(400).json(err) })
+    }
 
     /* DADOS NECESSÁRIOS:
     user_id - STRING - "_id" (padrão MongoDB) do usuário desejado
