@@ -656,6 +656,28 @@ api.delete("/scores/taskscompleted", async (req, res) => {
         .catch((err) => { res.status(400).json(err) })
 })
 
+//  USAR ISSO
+api.put("/scores/taskscompleted", async (req, res) => {
+    var contentFind = req.body
+    if (Object.keys(contentFind).length === 0) {
+        contentFind = req.query
+    }
+
+    let taskSearch = await modelMarkedTasks.findOne({ _id: contentFind.user_id })
+    if(!taskSearch) {
+        return res.status(400).json("'_id' da task inválida")
+    }
+
+    console.log(taskSearch)
+    return res.status(200).json(taskSearch)
+
+    /* DADOS NECESSÁRIOS:
+    user_id - STRING - "_id" (padrão MongoDB) do usuário desejado
+    markedtask_id - STRING - "_id" (padrão MongoDB) da task desejada
+    score - NUMBER - valor a modificar na contagem (opcional)
+    */
+})
+
 /*
 api.get("/scores/tasksassigned/user", async (req, res) => {
     //  pega a contagem de tarefas atribuidas para UM usuário
@@ -699,6 +721,8 @@ api.delete("/scores/tasksassigned/users", async (req, res) => {
 })
 
 // |||||====||||| ------------------ |||||====|||||
+
+
 
 // |||||====||||| dispositivos |||||====|||||
 
