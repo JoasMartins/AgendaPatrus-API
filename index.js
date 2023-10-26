@@ -240,8 +240,8 @@ var schemaUsers = new mongoose.Schema({
 })
 
 var schemaMarkedTasks = new mongoose.Schema({
-    id_task: Number,
-    id_user: Number,
+    id_task: String,
+    id_user: String,
     timestamp: Number,
     id: {
         type: Number,
@@ -663,12 +663,14 @@ api.put("/scores/taskscompleted", async (req, res) => {
         contentFind = req.query
     }
 
-    let taskSearch = await modelMarkedTasks.findOne({ _id: contentFind.user_id })
+    let taskSearch = await modelMarkedTasks.findOne({ _id: contentFind.markedtask_id })
+    /*
     if(!taskSearch) {
         return res.status(400).json("'_id' da task inválida")
     }
+    */
 
-    console.log(taskSearch)
+    console.log(contentFind)
     return res.status(200).json(taskSearch)
 
     /* DADOS NECESSÁRIOS:
