@@ -663,7 +663,7 @@ api.put("/scores/taskscompleted", async (req, res) => {
         contentFind = req.query
     }
 
-    let taskSearch = await modelMarkedTasks.findOne({ _id: contentFind.markedtask_id })
+    let taskSearch = await modelMarkedTasks.findOne({ id_task: contentFind.markedtask_id })
     /*
     if(!taskSearch) {
         return res.status(400).json("'_id' da task inválida")
