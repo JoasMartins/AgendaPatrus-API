@@ -376,9 +376,9 @@ api.post("/tasks", async (req, res) => {
     }
 
     try {
-        new modelTask(taskSend).save()
         await modelUsers.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
-        return res.status(200).json(data)
+        new modelTask(taskSend).save()
+        .then((data) => { return res.status(200).json(data) })
     }
     catch (error) {
         console.error(error)
