@@ -875,7 +875,6 @@ api.post("/addnewvalues", async (req, res) => {
 
 api.get("/app/version", async (req, res) => {
     let dataApp = await modelAppinfos.findOne({})
-    console.log(dataApp)
 
     let dadosVersion = {
         status: dataApp.versions.status,
