@@ -873,7 +873,7 @@ api.post("/addnewvalues", async (req, res) => {
 //  /app/version
 
 
-api.get("app/version", async (req, res) => {
+api.get("/app/version", async (req, res) => {
     let dataApp = await modelAppinfos.findOne({})
     console.log(dataApp)
 
@@ -882,7 +882,7 @@ api.get("app/version", async (req, res) => {
         version: dataApp.versions.version,
         value: dataApp.versions.value,
         text: dataApp.versions.text
-        
+
     }
 
     return res.status(200).json(dadosVersion)
