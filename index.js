@@ -882,6 +882,7 @@ api.get("app/version", async (req, res) => {
         version: dataApp.versions.version,
         value: dataApp.versions.value,
         text: dataApp.versions.text
+        
     }
 
     return res.status(200).json(dadosVersion)
