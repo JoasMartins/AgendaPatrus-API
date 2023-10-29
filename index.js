@@ -259,6 +259,15 @@ var schemaDevices = new mongoose.Schema({
     }
 })
 
+let schemaAppinfos = new mongoose.Schema({
+    versions: {
+        status: String,
+        version: String,
+        value: Number,
+        text: String
+    }
+})
+
 async function increment(next) {
     const doc = this;
     if (!doc.isNew) {
@@ -287,6 +296,7 @@ const modelLogAlerts = mongoose.model("LogAlert", schemaLogAlerts)
 const modelMarkedTasks = mongoose.model('MarkedTask', schemaMarkedTasks);
 const modelUsers = mongoose.model("User", schemaUsers)
 const modelDevices = mongoose.model("Device", schemaDevices)
+const modelAppinfos = mongoose.model("Appinfo", schemaAppinfos)
 
 // -------------------------------------------------------------
 
@@ -847,3 +857,32 @@ api.post("/addnewvalues", async (req, res) => {
         .catch((err) => { res.status(400).json(err) })
 })
 */
+
+
+
+
+
+
+
+
+
+// |||||====||||| ------- |||||====|||||
+
+// |||||====||||| outros |||||====|||||
+
+//  /app/version
+
+
+api.get("app/version", async (req, res) => {
+    let dataApp = await modelAppinfos.findOne({})
+    console.log(dataApp)
+
+    let dadosVersion = {
+        status: dataApp.versions.status,
+        version: dataApp.versions.version,
+        value: dataApp.versions.value,
+        text: dataApp.versions.text
+    }
+
+    return res.status(200).json(dadosVersion)
+})
