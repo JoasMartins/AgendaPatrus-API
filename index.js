@@ -496,12 +496,14 @@ api.post("/users", async (req, res) => {
         turma: "" // 1MA 1MB 1MC | 2MA 2MB 2MC | 3MA 3MB 3MC
     }
 
+    let userDaTurma = await modelUsers.findOne({ turma: userData.turma })
+
     let modelSendUser = {
         fullname: userData.fullname || "",
         email: userData.email || "",
         password: userData.password || "",
         turma: userData.turma || null,
-        tasksAtribuidas: 0,
+        tasksAtribuidas: userDaTurma?.tasksAtribuidas || 0,
         tasksFeitas: 0
     }
 
