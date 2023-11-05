@@ -636,10 +636,13 @@ api.post("/emailtest", async (req, res) => {
                 background-color: #111c49;
                 height: 100px;
                 display: flex;
-                justify-content: space-around;
+                justify-content: center;
                 align-items: center;
                 ">
-                <img src="" alt="logo patrus" />
+                <img src="https://imgur.com/hA1duEU.png" alt="logo patrus" style="
+                height: 70px;
+                margin-right: 40px;
+            " />
                 <h1 style="
                 color: #fff;
             ">Agenda Patrus</h1>
