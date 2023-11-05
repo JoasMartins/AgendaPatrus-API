@@ -549,6 +549,9 @@ api.post("/teachers", async (req, res) => {
     async function generateUniqueCode(length) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let code;
+        let codesDB = await modelUsers.find()
+        let usedCodes = codesDB.map(user => user.codeRegister)
+        console.log(usedCodes)
 
         do {
             code = ''; // Inicializa o código como uma string vazia
@@ -558,7 +561,6 @@ api.post("/teachers", async (req, res) => {
             }
         } while (usedCodes.has(code)); // Verifica se o código já foi usado
 
-        usedCodes.add(code); // Adiciona o código à lista de códigos usados
         return code;
     }
     let code = await generateUniqueCode(6)
