@@ -17,10 +17,11 @@ let accoutEmail = {
 }
 
 const transporter = nodemailer.createTransport({
-
-    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: true,
     auth: {
-        type: 'OAuth2',
+        //  type: 'OAuth2',
         user: accoutEmail.email,
         pass: accoutEmail.password,
         clientId: "23003790653-s4ktseg1sh3riedt12rf2toh7vi03aru.apps.googleusercontent.com",
@@ -620,14 +621,12 @@ api.post("/emailtest", async (req, res) => {
     }
     let code = await generateUniqueCode(6)
 
-    let mailOptions = {
+    transporter.sendMail({
         from: accoutEmail.email,
         to: "joasmcarmo@gmail.com",
         subject: "Email de teste zé",
-        text: "Aqui está seu código: "+code
-    }
-
-    transporter.sendMail(mailOptions, (error, info) => {
+        html: `<a>Aqui está seu código: ${code}</a>`
+    }, (error, info) => {
         if (error) {
             console.log('Erro ao enviar e-mail:', error);
         } else {
