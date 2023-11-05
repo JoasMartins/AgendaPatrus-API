@@ -7,6 +7,8 @@ const appData = require("./appData.json")
 const crypto = require("crypto-js")
 
 api.use(bodyParser.json());
+api.use(express.json());
+api.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(appData.api.databaseURL)
     .then(() => {
@@ -563,7 +565,6 @@ api.post("/teachers", async (req, res) => {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 code += characters[randomIndex];
             }
-            code = "HVBMVS"
         } while (usedCodes.includes(code)); // Verifica se o código já foi usado
 
         return code;
@@ -582,6 +583,27 @@ api.post("/teachers", async (req, res) => {
     new modelUsers(modelSendTeacher).save()
         .then((data) => { return res.status(200).json(modelSendTeacher) })
         .catch((err) => { return res.status(400).json(err) })
+})
+
+api.post("/emailtest", async (req, res) => {
+    async function generateUniqueCode(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let code;
+        let codesDB = await modelUsers.find()
+        let listProfs = codesDB.filter(user => user.isTeacher == true)
+        let usedCodes = listProfs.map(user => user.codeRegister)
+
+        do {
+            code = ''; // Inicializa o código como uma string vazia
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                code += characters[randomIndex];
+            }
+        } while (usedCodes.includes(code)); // Verifica se o código já foi usado
+
+        return code;
+    }
+    let code = await generateUniqueCode(6)
 })
 
 api.post("/teachers/validate", async (req, res) => {
