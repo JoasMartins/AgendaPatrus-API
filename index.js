@@ -13,19 +13,20 @@ api.use(express.urlencoded({ extended: true }));
 
 let accoutEmail = {
     email: "soundtrack.equipe@gmail.com",
-    password: "2806#4755mc"
+    password: "cuebbmxuvtkjvnuj"
 }
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    //host: "smtp.gmail.com",
+    service: "gmail",
     //port: 587,
-    secure: false,
+    //secure: false,
     auth: {
         //  type: 'OAuth2',
         user: accoutEmail.email,
         pass: accoutEmail.password,
-        clientId: "23003790653-s4ktseg1sh3riedt12rf2toh7vi03aru.apps.googleusercontent.com",
-        clientSecret: "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",
+        //clientId: "23003790653-s4ktseg1sh3riedt12rf2toh7vi03aru.apps.googleusercontent.com",
+        //clientSecret: "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",
         //  refreshToken: process.env.OAUTH_REFRESH_TOKEN
     }
 })
