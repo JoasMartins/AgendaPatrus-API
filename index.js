@@ -12,7 +12,7 @@ api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
 
 let accoutEmail = {
-    email: "joas.mycraft@gmail.com",
+    email: "soundtrack.equipe@gmail.com",
     password: "2806#4755mc"
 }
 
