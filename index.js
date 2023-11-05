@@ -5,10 +5,24 @@ const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const appData = require("./appData.json")
 const crypto = require("crypto-js")
+const nodemailer = require("nodemailer")
 
 api.use(bodyParser.json());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
+
+let accoutEmail = {
+    email: "joas.mycraft@gmail.com",
+    password: "joas135791235"
+}
+
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: accoutEmail.email,
+        pass: accoutEmail.password
+    }
+})
 
 mongoose.connect(appData.api.databaseURL)
     .then(() => {
@@ -555,7 +569,6 @@ api.post("/teachers", async (req, res) => {
         let codesDB = await modelUsers.find()
         let listProfs = codesDB.filter(user => user.isTeacher == true)
         let usedCodes = listProfs.map(user => user.codeRegister)
-        console.log(usedCodes)
 
         do {
             code = ''; // Inicializa o código como uma string vazia
@@ -568,7 +581,6 @@ api.post("/teachers", async (req, res) => {
         return code;
     }
     let code = await generateUniqueCode(6)
-    console.log(code)
 
     let modelSendTeacher = {
         fullname: data.fullname || "",
@@ -602,6 +614,21 @@ api.post("/emailtest", async (req, res) => {
         return code;
     }
     let code = await generateUniqueCode(6)
+
+    let mailOptions = {
+        from: accoutEmail.email,
+        to: "joasmcarmo@gmail.com",
+        subject: "Email de teste zé",
+        text: "Aqui está seu código: "+code
+    }
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Erro ao enviar e-mail:', error);
+        } else {
+            console.log('E-mail enviado com sucesso:', info.response);
+        }
+    })
 })
 
 api.post("/teachers/validate", async (req, res) => {
