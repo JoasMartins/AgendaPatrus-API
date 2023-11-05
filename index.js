@@ -17,10 +17,15 @@ let accoutEmail = {
 }
 
 const transporter = nodemailer.createTransport({
+
     service: "Gmail",
     auth: {
+        type: 'OAuth2',
         user: accoutEmail.email,
-        pass: accoutEmail.password
+        pass: accoutEmail.password,
+        clientId: "23003790653-s4ktseg1sh3riedt12rf2toh7vi03aru.apps.googleusercontent.com",
+        clientSecret: "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",
+        //  refreshToken: process.env.OAUTH_REFRESH_TOKEN
     }
 })
 
