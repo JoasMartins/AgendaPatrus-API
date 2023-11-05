@@ -648,7 +648,7 @@ api.post("/emailtest", async (req, res) => {
             <div style="
                 border-top-width: 20px;
                 border-top-color: #073ACE;
-                padding: 0px 20px 0px 20px;
+                padding: 0px 10px 0px 10px;
                 ">
                 <div style="padding: 20px;">
                     <h2 style="
@@ -692,38 +692,29 @@ api.post("/emailtest", async (req, res) => {
                 
                 <div style="
                 display: flex;
-                align-items: center;
                 flex-direction: column;
+                align-items: center;
+            ">
+    
+            <hr width="85%"></hr>
+    
+                <div style="
+                            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin: 25px 0px 25px 0px;
                 ">
-        
+                    <p style="font-size: 14px;">O seu código único de registro é:</p>
+                    <h1 style="font-size: 40px; margin-top: 5px;">${code || "Inválido (erro#)"}</h1>
                     <div style="
-                    height: 1px;
-                    width: 85%;
+                    height: 2px;
+                    width: 170px;
                     background-color: #555555;
-                    margin-bottom: 20px;
-                "></div>
-        
-                    <div style="
-                                display: flex;
-                align-items: center;
-                flex-direction: column;
-                    ">
-                        <p style="font-size: 14px;">O seu código único de registro é:</p>
-                        <h1 style="font-size: 40px; margin-top: 5px;">${code || "Inválido (erro#)"}</h1>
-                        <div style="
-                        height: 2px;
-                        width: 170px;
-                        background-color: #555555;
-                        margin-top: -2.5px;
-                        "></div>
-                    </div>
-        
-                    <div style="
-                height: 1px;
-                width: 85%;
-                background-color: #555555;
-                margin-top: 20px;
-            "></div>
+                    margin-top: -2.5px;
+                    "></div>
+                </div>
+    
+                <hr width="85%"></hr>
         
                 </div>
         
