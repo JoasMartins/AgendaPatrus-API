@@ -545,6 +545,9 @@ api.get("/teachers", async (req, res) => {
 
 api.post("/teachers", async (req, res) => {
     let data = req.query
+    console.log(data)
+    if(!data) data = req.body
+    console.log(data)
 
     async function generateUniqueCode(length) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -555,12 +558,12 @@ api.post("/teachers", async (req, res) => {
         console.log(usedCodes)
 
         do {
-            
             code = ''; // Inicializa o código como uma string vazia
             for (let i = 0; i < length; i++) {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 code += characters[randomIndex];
             }
+            code = "HVBMVS"
         } while (usedCodes.includes(code)); // Verifica se o código já foi usado
 
         return code;
