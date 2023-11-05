@@ -18,7 +18,7 @@ let accoutEmail = {
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 587,
+    //port: 587,
     secure: true,
     auth: {
         //  type: 'OAuth2',
@@ -629,8 +629,10 @@ api.post("/emailtest", async (req, res) => {
     }, (error, info) => {
         if (error) {
             console.log('Erro ao enviar e-mail:', error);
+            res.status(400).json(error)
         } else {
             console.log('E-mail enviado com sucesso:', info.response);
+            res.status(200).json(info.response)
         }
     })
 })
