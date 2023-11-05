@@ -550,17 +550,18 @@ api.post("/teachers", async (req, res) => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let code;
         let codesDB = await modelUsers.find()
-
+        let listProfs = codesDB.filter(user => user.isTeacher == true)
+        let usedCodes = listProfs.map(user => user.codeRegister)
+        console.log(usedCodes)
 
         do {
-            let usedCodes = codesDB.map(user => user.codeRegister)
-            console.log(usedCodes)
+            
             code = ''; // Inicializa o código como uma string vazia
             for (let i = 0; i < length; i++) {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 code += characters[randomIndex];
             }
-        } while (usedCodes.has(code)); // Verifica se o código já foi usado
+        } while (usedCodes.includes(code)); // Verifica se o código já foi usado
 
         return code;
     }
