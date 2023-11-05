@@ -702,14 +702,8 @@ api.post("/emailtest", async (req, res) => {
         margin: 25px 0px 25px 0px;
             ">
                 
-                <div style="display: flex; justify-content: center;"><p style="font-size: 14px;">O seu código único de registro é:</p></div>
-                <div style="display: flex; justify-content: center;"><h1 style="font-size: 40px; margin-top: 5px;">${code || "Inválido (erro#)"}</h1></div>
-                <div style="display: flex; justify-content: center;"><div style="
-                height: 2px;
-                width: 170px;
-                background-color: #555555;
-                margin-top: -2.5px;
-                "></div></div>
+            <p style="font-size: 14px; text-align: center;">O seu código único de registro é:</p>
+            <h1 style="font-size: 40px; margin-top: 5px; text-align: center; text-decoration: underline;">${code || "Inválido (erro#)"}</h1>
             </div>
     
                 <hr></hr>
