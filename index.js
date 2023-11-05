@@ -187,8 +187,14 @@ var schemaLogAlerts = new mongoose.Schema({
 var schemaUsers = new mongoose.Schema({
     fullname: String,
     email: String,
-    password: String,
-    turma: String,
+    password: {
+        type: String,
+        default: undefined
+    },
+    turma: {
+        type: String,
+        default: null
+    },
     settings: {
         pushTasksCreated: {
             type: Boolean,
@@ -233,6 +239,15 @@ var schemaUsers = new mongoose.Schema({
     },
     tasksAtribuidas: Number,
     tasksFeitas: Number,
+    isTeacher: {
+        type: Boolean,
+        default: false
+    },
+    birth: {
+        type: String,
+        default: null
+    },
+    codeRegister: String,
     id: {
         type: Number,
         default: 0
@@ -388,7 +403,7 @@ api.post("/tasks", async (req, res) => {
     try {
         await modelUsers.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
         new modelTask(taskSend).save()
-        .then((data) => { return res.status(200).json(data) })
+            .then((data) => { return res.status(200).json(data) })
     }
     catch (error) {
         console.error(error)
@@ -520,6 +535,52 @@ api.put("/users", async (req, res) => {
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 })
+
+// |||||====||||| ------- |||||====|||||
+
+// |||||====||||| professor |||||====|||||
+api.get("/teachers", async (req, res) => {
+
+})
+
+api.post("/teachers", async (req, res) => {
+    let data = req.query
+
+    async function generateUniqueCode(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let code;
+
+        do {
+            code = ''; // Inicializa o código como uma string vazia
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                code += characters[randomIndex];
+            }
+        } while (usedCodes.has(code)); // Verifica se o código já foi usado
+
+        usedCodes.add(code); // Adiciona o código à lista de códigos usados
+        return code;
+    }
+    let code = await generateUniqueCode(6)
+    console.log(code)
+
+    let modelSendTeacher = {
+        fullname: data.fullname || "",
+        email: data.email || "",
+        isTeacher: true,
+        birth: data.birth || "",
+        codeRegister: code,
+    }
+
+    new modelUsers(modelSendTeacher).save()
+        .then((data) => { return res.status(200).json(modelSendTeacher) })
+        .catch((err) => { return res.status(400).json(err) })
+})
+
+api.post("/teachers/validate", async (req, res) => {
+
+})
+
 // |||||====||||| -------- |||||====|||||
 
 // |||||====||||| tarefas concluídas |||||====|||||
@@ -603,7 +664,7 @@ api.delete("/markedtasks", async (req, res) => {
         contentFind = req.query
     }
 
-    console.log(contentFind)
+    //console.log(contentFind)
     var taskSearch = {}
 
     if (contentFind.id_task) {
@@ -619,7 +680,7 @@ api.delete("/markedtasks", async (req, res) => {
     } else {
         return res.status(400).json(null)
     }
-    console.log(taskSearch)
+    //console.log(taskSearch)
 
     let idDelete = taskSearch?._id
     if (!idDelete) return res.status(400).json(null)
@@ -859,14 +920,6 @@ api.post("/addnewvalues", async (req, res) => {
         .catch((err) => { res.status(400).json(err) })
 })
 */
-
-
-
-
-
-
-
-
 
 // |||||====||||| ------- |||||====|||||
 
