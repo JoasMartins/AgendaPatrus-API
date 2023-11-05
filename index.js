@@ -546,11 +546,8 @@ api.get("/teachers", async (req, res) => {
 })
 
 api.post("/teachers", async (req, res) => {
-    let data = req.query
-    console.log(req.query)
-    if(!data) data = req.body
+    let data = req.body
     console.log(req.body)
-    console.log(req.params)
 
     async function generateUniqueCode(length) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
