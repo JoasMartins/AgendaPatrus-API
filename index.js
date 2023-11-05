@@ -690,13 +690,9 @@ api.post("/emailtest", async (req, res) => {
         
                 </div>
                 
-                <div style="
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            ">
+                <div>
     
-            <hr width="85%"></hr>
+                <hr></hr>
     
                 <div style="
                             display: flex;
@@ -714,7 +710,7 @@ api.post("/emailtest", async (req, res) => {
                     "></div>
                 </div>
     
-                <hr width="85%"></hr>
+                <hr></hr>
         
                 </div>
         
