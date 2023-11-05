@@ -648,7 +648,7 @@ api.post("/emailtest", async (req, res) => {
             <div style="
                 border-top-width: 20px;
                 border-top-color: #073ACE;
-                padding: 0px 100px 0px 100px;
+                padding: 0px 20px 0px 20px;
                 ">
                 <div style="padding: 20px;">
                     <h2 style="
@@ -689,12 +689,11 @@ api.post("/emailtest", async (req, res) => {
                     <h3>4. Pronto! Conta criada com sucesso</h3>
         
                 </div>
+                
                 <div style="
                 display: flex;
-                justify-content: center;
                 align-items: center;
                 flex-direction: column;
-                text-align: center;
                 ">
         
                     <div style="
@@ -706,10 +705,8 @@ api.post("/emailtest", async (req, res) => {
         
                     <div style="
                                 display: flex;
-                justify-content: center;
                 align-items: center;
                 flex-direction: column;
-                text-align: center;
                     ">
                         <p style="font-size: 14px;">O seu código único de registro é:</p>
                         <h1 style="font-size: 40px; margin-top: 5px;">${code || "Inválido (erro#)"}</h1>
