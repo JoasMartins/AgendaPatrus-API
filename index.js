@@ -622,11 +622,139 @@ api.post("/emailtest", async (req, res) => {
     }
     let code = await generateUniqueCode(6)
 
+    let nomeCompleto = "Linda Tonon Dias Ramiro"
+    const partesDoNome = nomeCompleto.split(" ");
+    const primeiroNome = partesDoNome[0];
+
     transporter.sendMail({
         from: accoutEmail.email,
         to: "joasmcarmo@gmail.com",
         subject: "Email de teste zé",
-        html: `<a>Aqui está seu código: ${code}</a>`
+        html: `<html>
+        <body>
+            <div style="
+                background-color: #111c49;
+                height: 100px;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                ">
+                <img src="" alt="logo patrus" />
+                <h1 style="
+                color: #fff;
+            ">Agenda Patrus</h1>
+            </div>
+        
+            <div style="
+                border-top-width: 20px;
+                border-top-color: #073ACE;
+                padding: 0px 100px 0px 100px;
+                ">
+                <div style="padding: 20px;">
+                    <h2 style="
+                        color: black;
+                        text-align: center;
+                        font-size: 30px;
+                        margin-top: 10px;
+                        margin-bottom: 30px;
+                        ">Olá <span
+                            style="font-weight: bolder; color: black;">${primeiroNome || "professor(a)"}</span>!</h2>
+        
+                    <p style="margin: 10px 0px 20px 0px;">O seu código único de registro para professores no aplicativo Agenda Patrus serve
+                        como forma segura para
+                        que as contas de professores e secretários da escola sejam criadas evitando com que alunos mal
+                        intencionados tenham acesso a funções exclusivas.</p>
+        
+                    <p style="margin: 10px 0px 30px 0px;">Para criar a sua conta de professor basta seguir os passos a seguir:</p>
+        
+                    <h3>1. Abrir a página de login para professor</h3>
+                    <p style="margin: 5px 0px 30px 0px;">Ao entrar no App clique em "Sou professor(a)".</p>
+        
+                    <h3>2. Colocar o seu código de registro</h3>
+                    <p style="margin: 5px 0px 30px 0px;">No campo de "Código de Registro" coloque o seu código que foi gerado e está no final
+                        deste e-mail e no
+                        comprovante de solicitação de registro obtido com o administrador do App (Joás do 2MB). Após, clique no
+                        botão "Prosseguir".</p>
+        
+                    <h3>3. Crie uma senha</h3>
+                    <p style="margin: 5px 0px 30px 0px;">Confirme se seus dados estão corretos e crie uma senha para a sua conta.
+        
+                        ATENÇÃO: Ao acessar sua conta será requisitado seu e-mail escolar e essa senha que você estará definido
+                        nessa etapa, por tanto não se esqueça dela!
+        
+                        As senhas são salva no banco de dados do Agenda Patrus usando as tecnologias de criptografias de padrão
+                        CHA256, CHA512 ou AES, sendo assim nem o administrador geral do App tem acesso a sua senha e não podendo
+                        vê-la para lhe informar em caso de esquecimento. Após, clique em "Criar conta".</p>
+        
+                    <h3>4. Pronto! Conta criada com sucesso</h3>
+        
+                </div>
+                <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                text-align: center;
+                ">
+        
+                    <div style="
+                    height: 1px;
+                    width: 85%;
+                    background-color: #555555;
+                    margin-bottom: 20px;
+                "></div>
+        
+                    <div style="
+                                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                text-align: center;
+                    ">
+                        <p style="font-size: 14px;">O seu código único de registro é:</p>
+                        <h1 style="font-size: 40px; margin-top: 5px;">${code || "Inválido (erro#)"}</h1>
+                        <div style="
+                        height: 2px;
+                        width: 170px;
+                        background-color: #555555;
+                        margin-top: -2.5px;
+                        "></div>
+                    </div>
+        
+                    <div style="
+                height: 1px;
+                width: 85%;
+                background-color: #555555;
+                margin-top: 20px;
+            "></div>
+        
+                </div>
+        
+                <div style="padding: 20px;">
+                    <p style="font-size: 12px; text-align: center;">Esse não é um e-mail enviado pela Secretária de Educação nem
+                        pela gestão da E. E. Sebastião Patrus de Souza</p>
+                </div>
+            </div>
+        </body>
+        
+        <style>
+            * {
+                font-family: Arial, Helvetica, sans-serif;
+                padding: 0px;
+                margin: 0px;
+                color: #555555;
+            }
+        
+            p {
+                margin: 0px;
+            }
+        
+            h3 {
+                margin: 0px;
+            }
+        </style>
+        
+        </html>`
     }, (error, info) => {
         if (error) {
             console.log('Erro ao enviar e-mail:', error);
