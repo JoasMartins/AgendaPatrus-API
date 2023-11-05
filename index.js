@@ -13,7 +13,7 @@ api.use(express.urlencoded({ extended: true }));
 
 let accoutEmail = {
     email: "joas.mycraft@gmail.com",
-    password: "joas135791235"
+    password: "2806#4755mc"
 }
 
 const transporter = nodemailer.createTransport({
