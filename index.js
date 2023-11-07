@@ -505,6 +505,7 @@ api.get("/users/verify", async (req, res) => {
 
 api.get("/users", async (req, res) => {
     let userData = req.query
+    console.log(userData)
     await modelUsers.findOne(userData)
         .then((data) => { return res.status(200).json(data) })
         .catch((err) => { return res.status(400).json(err) })
