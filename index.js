@@ -505,8 +505,7 @@ api.get("/users/verify", async (req, res) => {
 
 api.get("/users", async (req, res) => {
     let userData = req.query
-    console.log(req.body)
-    console.log(userData)
+
     await modelUsers.findOne(userData)
         .then((data) => { return res.status(200).json(data) })
         .catch((err) => { return res.status(400).json(err) })
@@ -555,6 +554,7 @@ api.post("/users", async (req, res) => {
 
 api.put("/users", async (req, res) => {
     let data = req.body?.params.dataPass
+    console.log(data)
 
     await modelUsers.findOneAndUpdate({ _id: data._id }, { $set: data })
         .then((data) => { res.status(200).json(data) })
