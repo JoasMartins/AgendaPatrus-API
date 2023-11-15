@@ -400,7 +400,7 @@ api.get("/tasks/several", async (req, res) => {
         let taskSearch = await modelTask.find({ turma: contentFind.turma })
         return res.status(200).json(taskSearch)
     } else if (contentFind.dateMin) {
-        let taskSearch = await modelTask.find({ date: { $gt: contentFind.date } })
+        let taskSearch = await modelTask.find({ date: { $gt: contentFind.dateMin } })
         return res.status(200).json(taskSearch)
     } else {
         return res.status(400).json(null)
