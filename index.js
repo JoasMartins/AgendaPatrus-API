@@ -394,7 +394,7 @@ api.get("/tasks/several", async (req, res) => {
         let taskSearch = await modelTask.find({ type: contentFind.type })
         return res.status(200).json(taskSearch)
     } else if (contentFind.date) {
-        let taskSearch = await modelTask.find({ date: contentFind.date })
+        let taskSearch = await modelTask.find({ date: contentFind.date-1 })
         return res.status(200).json(taskSearch)
     } else if (contentFind.turma) {
         let taskSearch = await modelTask.find({ turma: contentFind.turma })
