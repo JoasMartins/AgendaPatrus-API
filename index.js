@@ -399,6 +399,9 @@ api.get("/tasks/several", async (req, res) => {
     } else if (contentFind.turma) {
         let taskSearch = await modelTask.find({ turma: contentFind.turma })
         return res.status(200).json(taskSearch)
+    } else if (contentFind.dateMin) {
+        let taskSearch = await modelTask.find({ date: { $gt: contentFind.date } })
+        return res.status(200).json(taskSearch)
     } else {
         return res.status(400).json(null)
     }
@@ -554,7 +557,6 @@ api.post("/users", async (req, res) => {
 
 api.put("/users", async (req, res) => {
     let data = req.body
-    console.log(data)
 
     await modelUsers.findOneAndUpdate({ _id: data._id }, { $set: data })
         .then((data) => { res.status(200).json(data) })
