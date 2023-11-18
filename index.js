@@ -557,6 +557,7 @@ api.post("/users", async (req, res) => {
 
 api.put("/users", async (req, res) => {
     let data = req.body
+    console.log(data)
 
     await modelUsers.findOneAndUpdate({ _id: data._id }, { $set: data })
         .then((data) => { res.status(200).json(data) })
@@ -798,6 +799,8 @@ api.get("/markedtasks/several", async (req, res) => {
     } else if (contentFind.id) {
         let taskSearch = await modelMarkedTasks.find({ id: contentFind.id })
         return res.status(200).json(taskSearch)
+    } else if (contentFind._id) {
+
     } else {
         return res.status(400).json(null)
     }
