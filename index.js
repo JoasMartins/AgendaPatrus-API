@@ -2063,7 +2063,7 @@ api.get("/adm/statistics/classWithMoreTasks", async (req, res) => {
 
 
 
-api.get("/school", async (req, res) => {
+api.post("/school", async (req, res) => {
     let valueSearch = req.body
     let finded = await modelSchools.findOne(valueSearch)
 
