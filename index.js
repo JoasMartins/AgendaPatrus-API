@@ -6,10 +6,21 @@ const mongoose = require("mongoose")
 const appData = require("./appData.json")
 const crypto = require("crypto-js")
 const nodemailer = require("nodemailer")
+const multer = require("multer")
+const xlsx = require("xlsx")
+const cors = require('cors');
+const { v4 } = require("uuid")
+require('dotenv').config()
 
 api.use(bodyParser.json());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
+api.use(cors());
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+
+//xlsx.set_fs(fs)
 
 let accoutEmail = {
     email: "soundtrack.equipe@gmail.com",
@@ -31,10 +42,10 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-mongoose.connect(appData.api.databaseURL)
-    .then(() => {
-
-        console.log("🟢 | MongoDB conectada com sucesso!")
+mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
+    .then((connection) => {
+        const dbName = connection.connections[0].client.s.options.srvHost
+        console.log(`🟢 | MongoDB conectada com sucesso!\n---> ${dbName}`)
         api.listen(4000, async () => {
             console.log("🟢 | API ligada com sucesso!")
 
@@ -142,6 +153,8 @@ mongoose.connect(appData.api.databaseURL)
 
             }
 
+            //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
+            /*
             setInterval(async () => {
                 axios.get(appData.api.url + "/")
                     .then(() => {
@@ -170,6 +183,7 @@ mongoose.connect(appData.api.databaseURL)
                         console.log(err)
                     })
             }, 1000 * 60 * 2)
+            */
 
             //  FAZER: Nas notificações da restando mais de 0 dias, as tarefas que o user ja marcou
             //      como feito não será incluso em "text"
@@ -182,7 +196,6 @@ mongoose.connect(appData.api.databaseURL)
         console.log("❌ | API não foi ligada devido a não conexão com banco de dados!")
     })
 
-
 // -------------------------------------------------------------
 
 var schemaTasks = new mongoose.Schema({
@@ -191,10 +204,15 @@ var schemaTasks = new mongoose.Schema({
     type: String,
     date: Number,
     turma: String,
+    matterId: String,
     id: {
         type: Number,
         default: 0
-    }
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
 
 var schemaLogAlerts = new mongoose.Schema({
@@ -204,7 +222,11 @@ var schemaLogAlerts = new mongoose.Schema({
     id: {
         type: Number,
         default: 0
-    }
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
 
 var schemaUsers = new mongoose.Schema({
@@ -274,7 +296,11 @@ var schemaUsers = new mongoose.Schema({
     id: {
         type: Number,
         default: 0
-    }
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
 
 var schemaMarkedTasks = new mongoose.Schema({
@@ -284,7 +310,11 @@ var schemaMarkedTasks = new mongoose.Schema({
     id: {
         type: Number,
         default: 0
-    }
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
 
 var schemaDevices = new mongoose.Schema({
@@ -294,7 +324,11 @@ var schemaDevices = new mongoose.Schema({
     id: {
         type: Number,
         default: 0
-    }
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
 
 let schemaAppinfos = new mongoose.Schema({
@@ -303,8 +337,155 @@ let schemaAppinfos = new mongoose.Schema({
         version: String,
         value: Number,
         text: String
-    }
+    },
+    school: {
+        name: String,
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
 })
+
+let schemaSchools = new mongoose.Schema({
+    school: String,
+    email: String,
+    codeStudent: String,
+    codeTeacher: String,
+    codePortal: String,
+    registerTime: {
+        type: Number,
+        default: null
+    },
+})
+
+// NOVOS DADOS
+const schemaStudents = new mongoose.Schema({
+    fullname: String,
+    birth: {
+        type: String,
+        default: null
+    },
+    turma: String,
+    tasksAtribuidas: {
+        type: Number,
+        default: 0
+    },
+    tasksFeitas: {
+        type: Number,
+        default: 0
+    },
+    settings: {
+        pushTasksCreated: {
+            type: Boolean,
+            default: false
+        },
+        pushTasksToday: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks1Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks2Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks3Days: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks4Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks5Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks6Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks7Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks10Days: {
+            type: Boolean,
+            default: false
+        },
+    },
+    isPunished: {
+        type: Boolean,
+        default: false
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
+
+    email: {
+        type: String,
+        default: null
+    },
+    password: {
+        type: String,
+        default: null
+    },
+
+})
+
+const schemaTeachers = new mongoose.Schema({
+    fullname: String,
+    birth: String,
+    matterId: String,
+    createdTasks: {
+        type: Number,
+        default: 0
+    },
+    email: {
+        type: String,
+        default: null
+    },
+    password: {
+        type: String,
+        default: null
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
+})
+
+const schemaClass = new mongoose.Schema({
+    title: String,
+    isReserved: {
+        type: Boolean,
+        default: false
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
+})
+
+const schemaMatter = new mongoose.Schema({
+    title: String,
+    registerTime: Number,
+})
+
+const schemaTokens = new mongoose.Schema({
+    token: String,
+    school: String,
+    timestamp: Number,
+    registerTime: {
+        type: Number,
+        default: null
+    },
+})
+
 
 async function increment(next) {
     const doc = this;
@@ -313,10 +494,11 @@ async function increment(next) {
     }
 
     try {
-        const lastUser = await this.constructor.findOne({}, {}, { sort: { id: -1 } });
-        const lastId = lastUser ? lastUser.id : 0;
+        //const lastUser = await this.constructor.findOne({}, {}, { sort: { id: -1 } });
+        //const lastId = lastUser ? lastUser.id : 0;
 
-        doc.id = lastId + 1;
+        doc.registerTime = Date.now()
+        //doc.id = lastId + 1;
         return next();
     } catch (error) {
         return next(error);
@@ -328,6 +510,14 @@ schemaLogAlerts.pre('save', increment)
 schemaUsers.pre('save', increment)
 schemaMarkedTasks.pre('save', increment);
 schemaDevices.pre('save', increment)
+schemaAppinfos.pre('save', increment)
+
+schemaSchools.pre('save', increment)
+schemaStudents.pre('save', increment)
+schemaTeachers.pre('save', increment)
+schemaClass.pre('save', increment)
+schemaTokens.pre('save', increment)
+schemaMatter.pre('save', increment)
 
 const modelTask = mongoose.model("Task", schemaTasks)
 const modelLogAlerts = mongoose.model("LogAlert", schemaLogAlerts)
@@ -335,6 +525,15 @@ const modelMarkedTasks = mongoose.model('MarkedTask', schemaMarkedTasks);
 const modelUsers = mongoose.model("User", schemaUsers)
 const modelDevices = mongoose.model("Device", schemaDevices)
 const modelAppinfos = mongoose.model("Appinfo", schemaAppinfos)
+
+const modelStudents = mongoose.model("Student", schemaStudents)
+const modelTeacher = mongoose.model("Teacher", schemaTeachers)
+const modelClass = mongoose.model("Class", schemaClass)
+const modelMatter = mongoose.model("Matter", schemaMatter)
+
+//  GLOBAL
+const modelSchools = mongoose.model("School", schemaSchools)
+const modelTokens = mongoose.model("Token", schemaTokens)
 
 // -------------------------------------------------------------
 
@@ -400,7 +599,7 @@ api.get("/tasks/several", async (req, res) => {
         let taskSearch = await modelTask.find({ turma: contentFind.turma })
         return res.status(200).json(taskSearch)
     } else if (contentFind.dateMin) {
-        let taskSearch = await modelTask.find({ date: { $gt: contentFind.dateMin-1 } })
+        let taskSearch = await modelTask.find({ date: { $gt: contentFind.dateMin - 1 } })
         return res.status(200).json(taskSearch)
     } else {
         return res.status(400).json(null)
@@ -1100,8 +1299,6 @@ api.post("/addnewvalues", async (req, res) => {
 // |||||====||||| outros |||||====|||||
 
 //  /app/version
-
-
 api.get("/app/version", async (req, res) => {
     let dataApp = await modelAppinfos.findOne({})
 
@@ -1114,4 +1311,761 @@ api.get("/app/version", async (req, res) => {
     }
 
     return res.status(200).json(dadosVersion)
+})
+
+
+
+
+//  VERSÃO 1.1.0
+//  Registro de Estudante
+api.post("/adm/register/student", async (req, res) => {
+    //  ADM registrar UM ALUNO
+
+    let modeloDados = {
+        fullname: "",
+        birth: "",
+        turma: "",
+    }
+    //==============================
+    let dataStudent = req.body
+
+    if (!dataStudent.fullname || !dataStudent.birth || !dataStudent.turma) {
+        return res.status(400).send({ error: true, response: "Existe dados faltando!" })
+    }
+
+    let newConection = mongoose.createConnection(appData.api.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newModelStudent = newConection.model("Student", schemaStudents)
+
+    new newModelStudent(dataStudent).save()
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((err) => {
+            res.status(400).send({ error: true, response: err })
+        })
+})
+
+api.post("/adm/register/students", upload.single("file"), async (req, res) => {
+    //  ADM registrar VÁRIOS ALUNOS
+    let modeloDados = {
+        fullname: "",
+        birth: "",
+        turma: "",
+        RA: "", // OPCIONAL
+    }
+    //==============================
+    if (!req.file) {
+        return res.status(400).json({ error: true, response: "Nenhum arquivo foi enviado!" })
+    }
+
+    const buffer = req.file.buffer;
+    const workbook = xlsx.read(buffer, { type: 'buffer' });
+
+    let newConection = mongoose.createConnection(appData.api.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newModelStudent = newConection.model("Student", schemaStudents)
+    let newModelClass = newConection.model("Class", schemaClass)
+
+    const planExcel = xlsx.utils.sheet_to_json(workbook.Sheets.Plan1)
+    let errors = []
+    let sucess = []
+    await planExcel.forEach(async (dataStudent) => {
+        if (!dataStudent.Nome || !dataStudent.Nascimento || !dataStudent.Turma) {
+            errors.push(dataStudent)
+        } else {
+            let newFormat = {
+                fullname: dataStudent.Nome,
+                birth: dataStudent.Nascimento,
+                turma: dataStudent.Turma,
+                RA: dataStudent.RA || null,
+            }
+
+            await newModelClass.findOne({ title: newFormat.turma })
+                .then((turmaStudent) => {
+                    if (!turmaStudent) {
+                        new newModelClass({ title: newFormat.turma }).save()
+                    }
+                })
+
+            //  ARRUMAR ERRO AQUI
+
+            new newModelStudent(newFormat).save()
+            sucess.push(dataStudent)
+        }
+
+
+    })
+
+    res.send({ sucess, errors })
+})
+
+
+
+
+//  VERSÃO 1.1.1
+api.get("/adm/log", async (req, res) => {
+    // todas as modificações no BANCO DE DADOS da ESCOLA será buscado com esse comando
+})
+
+api.post("/adm/log", async (req, res) => {
+    // NOVAS modificações no BANCO DE DADOS da ESCOLA será registrado com esse comando
+})
+
+
+api.post("/code/students", async (req, res) => {
+    // PEGAR o código de liberação do app da ESCOLA de alunos || Verificar se o código passado está correto
+})
+
+api.post("/code/teachers", async (req, res) => {
+    // PEGAR o código de liberação do app da ESCOLA de PROFESSORES || Verificar se o código passado está correto
+})
+
+api.post("/code/portal", async (req, res) => {
+    // PEGAR o código de liberação do app do PORTAL da SECRETARIA da ESCOLA || Verificar se o código passado está correto    
+    let { codeClient } = req.body
+
+    let dataFound = await modelSchools.findOne({ codePortal: codeClient })
+    if (!dataFound) {
+        return res.json(null)
+    } else {
+        return res.json(dataFound?.school)
+    }
+})
+
+api.post("/adm/login", async (req, res) => {
+    let { nameSchool } = req.body
+
+    const schoolsTokens = await modelTokens.find()
+    const tokensLimited = schoolsTokens.filter(token => Date.now() > token.timestamp + 1000 * 60 * 60 * 24 * 30 * 3)
+    tokensLimited.map(async (item) => {
+        await modelTokens.findByIdAndDelete(item._id)
+    })
+
+    const newData = {
+        token: v4(),
+        school: nameSchool,
+        timestamp: Date.now()
+    }
+
+    new modelTokens(newData).save()
+        .then((resp) => {
+            res.json(newData)
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+})
+
+api.post("/adm/token", async (req, res) => {
+    const { token } = req?.body
+    console.log(token)
+
+    let result = await modelTokens.findOne({ token })
+    res.json(result)
+})
+
+api.post("/adm/token-register", async (req, res) => {
+    const { school, token } = req?.body
+    console.log(school, token)
+
+    new modelTokens({ school, token }).save()
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+})
+
+
+api.get("/register/student", async (req, res) => {
+
+})
+
+api.post("/register/student", async (req, res) => {
+
+})
+
+
+api.get("/register/teacher", async (req, res) => {
+
+})
+
+api.post("/register/teacher", async (req, res) => {
+
+})
+
+
+api.get("/register/class", async (req, res) => {
+
+})
+
+api.post("/register/class", async (req, res) => {
+
+})
+
+
+api.get("/register/matter", async (req, res) => {
+
+})
+
+api.post("/register/matter", async (req, res) => {
+    let token = req.header("Authorization")
+    console.log(token)
+
+    res.json(token)
+})
+
+
+
+api.get("/search/students", async (req, res) => {
+    let valueSearch = req.query?.valueSearch || ""
+    let filter = req.query?.filter || ""
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelStudents = newConection.model("Student", schemaStudents)
+
+    let finded = []
+
+    if (filter) {
+        if (filter == "NAME") {
+            finded = await modelStudents.find({ fullname: { $regex: valueSearch, $options: 'i' } })
+        } else if (filter == "CLASS") {
+            finded = await modelStudents.find({ turma: { $regex: valueSearch, $options: 'i' } })
+        } else {
+            finded = await modelStudents.find({
+                $or: [
+                    { fullname: { $regex: valueSearch, $options: 'i' } },
+                    { turma: { $regex: valueSearch, $options: 'i' } }
+                ]
+            })
+        }
+    } else {
+        finded = await modelStudents.find({
+            $or: [
+                { fullname: { $regex: valueSearch, $options: 'i' } },
+                { turma: { $regex: valueSearch, $options: 'i' } }
+            ]
+        })
+    }
+
+    res.json(finded)
+})
+
+
+
+api.post("/adm/actions/student-punish", async (req, res) => {
+    const student = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Student", schemaStudents)
+    await model.findByIdAndUpdate(student._id, { isPunished: true })
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+api.post("/adm/actions/student-unpunish", async (req, res) => {
+    const student = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Student", schemaStudents)
+    await model.findByIdAndUpdate(student._id, { isPunished: false })
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+api.put("/adm/actions/student", async (req, res) => {
+    const dataModify = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Student", schemaStudents)
+    await model.findByIdAndUpdate(dataModify._id, dataModify)
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+api.delete("/adm/actions/student", async (req, res) => {
+    const idStudent = req.query?.idStudent
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Student", schemaStudents)
+    await model.findByIdAndDelete(idStudent)
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+api.post("/adm/actions/student", async (req, res) => {
+    const student = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Student", schemaStudents)
+
+    new model(student).save()
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+api.post("/adm/actions/student-resetpassword", async (req, res) => {
+    const student = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let model = newConection.model("Student", schemaStudents)
+
+        model.findByIdAndUpdate(student?._id, {
+            password: null
+        }).then(result => {
+            return res.json(result)
+        })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.post("/adm/actions/student-add", async (req, res) => {
+    const student = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let model = newConection.model("Student", schemaStudents)
+
+        new model({
+            fullname: student?.fullname,
+            turma: student?.turma,
+            birth: null,
+            email: null,
+            password: null
+        }).save()
+            .then(result => {
+                return res.json(result)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+//==================== ADM - TURMAS ====================//
+api.get("/adm/actions/class-search", async (req, res) => {
+    let valueSearch = req.query?.valueSearch || ""
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelClass = newConection.model("Classes", schemaClass)
+
+        let finded = await newModelClass.find()
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.post("/adm/actions/class-add", async (req, res) => {
+    const turma = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelClass = newConection.model("Classes", schemaClass)
+
+        new newModelClass(turma).save()
+            .then(result => {
+                return res.json(result)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.get("/adm/actions/class-students", async (req, res) => {
+    let valueSearch = req.query?.class || ""
+    console.log(req.header("School"))
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelStudent = newConection.model("Student", schemaStudents)
+
+        let finded = await newModelStudent.find({ turma: valueSearch })
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.get("/adm/actions/class-tasks", async (req, res) => {
+    let valueSearch = req.query?.class || ""
+    console.log(req.header("School"))
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelTasks = newConection.model("Task", schemaTasks)
+
+        let finded = await newModelTasks.find({ turma: valueSearch })
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.post("/adm/actions/class-reserved", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelClass = newConection.model("Classes", schemaClass)
+
+        let classState = await newModelClass.findById(valueSearch?.id)
+
+        await newModelClass.findByIdAndUpdate(valueSearch?.id, {
+            isReserved: !classState?.isReserved
+        })
+            .then((resp) => {
+                return res.json(resp)
+            })
+            .catch((err) => {
+                return res.status(400).json(err)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+
+api.delete("/adm/actions/class-delete", async (req, res) => {
+    let valueSearch = req.body
+
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelClass = newConection.model("Classes", schemaClass)
+
+        await newModelClass.findByIdAndDelete(valueSearch?.id)
+            .then((resp) => {
+                return res.json(resp)
+            })
+            .catch((err) => {
+                return res.status(400).json(err)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+//==================== ADM - MATERIAS ====================//
+api.get("/adm/actions/matter-search", async (req, res) => {
+    let valueSearch = req.query?.valueSearch || ""
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelMatters = newConection.model("Matters", schemaMatter)
+
+        let finded = await newModelMatters.find({})
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.post("/adm/actions/matter-add", async (req, res) => {
+    const matter = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelMatter = newConection.model("Matter", schemaMatter)
+
+        new newModelMatter(matter).save()
+            .then(result => {
+                return res.json(result)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.put("/adm/actions/matter-edit", async (req, res) => {
+    const dataEdit = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelMatter = newConection.model("Matter", schemaMatter)
+
+        await newModelMatter.findByIdAndUpdate(dataEdit?.id, dataEdit?.update)
+            .then(result => {
+                return res.json(result)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.get("/adm/actions/matter-teachers", async (req, res) => {
+    let valueSearch = req.query?.matterId || ""
+    console.log(req.header("School"))
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelTeacher = newConection.model("Teacher", schemaTeachers)
+
+        let finded = await newModelTeacher.find({ matterId: valueSearch })
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.get("/adm/actions/matter-tasks", async (req, res) => {
+    let valueSearch = req.query?.matterId || ""
+    console.log(valueSearch)
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelTasks = newConection.model("Task", schemaTasks)
+
+        let finded = await newModelTasks.find({ matterId: valueSearch })
+        console.log(finded)
+        return res.json(finded || [])
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.post("/adm/actions/matter-reserved", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelClass = newConection.model("Classes", schemaClass)
+
+        let classState = await newModelClass.findById(valueSearch?.id)
+
+        await newModelClass.findByIdAndUpdate(valueSearch?.id, {
+            isReserved: !classState?.isReserved
+        })
+            .then((resp) => {
+                return res.json(resp)
+            })
+            .catch((err) => {
+                return res.status(400).json(err)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+api.delete("/adm/actions/matter-delete", async (req, res) => {
+    let valueSearch = req.body
+
+    if (!req.header("School")) {
+        return res.json("Header Null")
+    }
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newModelMatter = newConection.model("Matter", schemaMatter)
+
+        await newModelMatter.findByIdAndDelete(valueSearch?.id)
+            .then((resp) => {
+                return res.json(resp)
+            })
+            .catch((err) => {
+                return res.status(400).json(err)
+            })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+
+//==================== ADM - PROFESSORES ====================//
+// buscar professores com base no filtro enviado pelo cliente
+api.get("/adm/actions/teacher", async (req, res) => {
+    let valueSearch = req.query?.valueSearch || ""
+    let filter = req.query?.filter || ""
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTeachers = newConection.model("Teacher", schemaTeachers)
+
+    let finded = await modelTeachers.find({ fullname: { $regex: valueSearch, $options: 'i' } })
+
+    res.json(finded)
+})
+
+// editar os dados de um professor
+api.put("/adm/actions/teacher", async (req, res) => {
+    const dataModify = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let model = newConection.model("Teacher", schemaTeachers)
+
+    await model.findByIdAndUpdate(dataModify._id, dataModify)
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
+})
+
+// resetar a senha de um professor
+api.post("/adm/actions/teacher-resetpassword", async (req, res) => {
+    let user = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let model = newConection.model("Teacher", schemaTeachers)
+
+        model.findByIdAndUpdate(user?._id, {
+            password: null
+        }).then(result => {
+            return res.json(result)
+        })
+    } catch (err) {
+        return res.json(err)
+    }
+})
+
+//  SEGUI MODELO vvvvvvvvvvvv TRY...CATCH
+// apagar um professor do banco de dados
+api.delete("/adm/actions/teacher", async (req, res) => {
+    let idUser = req.query?.idUser
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let model = newConection.model("Teacher", schemaTeachers)
+        let resp = await model.findByIdAndDelete(idUser)
+        return res.json(resp)
+    } catch(erro) {
+        return res.status(400).json(erro)
+    }
+})
+
+// adicionar um professor ao banco de dados
+api.post("/adm/actions/teacher", async (req, res) => {
+    const user = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let model = newConection.model("Teacher", schemaTeachers)
+        let resp = await new model(user).save()
+        return res.json(resp)
+    } catch(erro) {
+        return res.status(400).json(erro)
+    }
+})
+
+
+
+//==================== ADM - OUTROS ====================//
+api.get("/adm/tasks", async (req, res) => {
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTasks = newConection.model("Task", schemaTasks)
+
+    let finded = await modelTasks.find()
+    res.json(finded)
+})
+
+
+
+//==================== ADM - ESTATISTICAS ====================//
+api.get("/statistics/tasks", async (req, res) => {
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTasks = newConection.model("Task", schemaTasks)
+
+    let finded = await modelTasks.find()
+    res.json(finded)
+})
+
+
+
+api.get("/adm/statistics/classWithMoreTasks", async (req, res) => {
+    let newConectionn = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTasks = newConectionn.model("Task", schemaTasks)
+    let dataTasks = await modelTasks.find() // Pega todas as tarefas do banco de dados da escola
+    let totalTasks = dataTasks.length
+    let tasks = dataTasks
+
+    // Objeto para armazenar a contagem de tarefas por turma
+    const tasksCountByTurma = {}
+    // Percorra todas as tarefas e conte quantas existem para cada turma
+    tasks.forEach(task => {
+      const turma = task.turma
+      if (tasksCountByTurma[turma]) {
+        tasksCountByTurma[turma]++
+      } else {
+        tasksCountByTurma[turma] = 1
+      }
+    })
+    // Encontre a turma com o maior número de tarefas
+    let maxTasksTurma = null
+    let maxTasksCount = 0
+
+    Object.entries(tasksCountByTurma).forEach(([turma, count]) => {
+      if (count > maxTasksCount) {
+        maxTasksTurma = turma
+        maxTasksCount = count
+      }
+    })
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: req.header("School")
+    })
+        
+
+    const percentage = (maxTasksCount / totalTasks) * 100
+
+    return res.json({
+        turma: maxTasksTurma, // Turma que mais tem tarefas.
+        value: maxTasksCount, // Quantidade da matérias para a turma.
+        percentage // Porcentagem em relação ao número total de tarefas.
+    })
+})
+
+
+
+api.get("/school", async (req, res) => {
+    let valueSearch = req.body
+    let finded = await modelSchools.findOne(valueSearch)
+
+    res.json(finded)
 })
