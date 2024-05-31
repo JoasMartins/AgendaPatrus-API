@@ -229,6 +229,18 @@ var schemaLogAlerts = new mongoose.Schema({
     },
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
 var schemaUsers = new mongoose.Schema({
     fullname: String,
     email: String,
@@ -239,7 +251,7 @@ var schemaUsers = new mongoose.Schema({
     turma: {
         type: String,
         default: null
-    },
+    }, // 🔁
     settings: {
         pushTasksCreated: {
             type: Boolean,
@@ -282,8 +294,8 @@ var schemaUsers = new mongoose.Schema({
             default: false
         },
     },
-    tasksAtribuidas: Number,
-    tasksFeitas: Number,
+    tasksAtribuidas: Number, // 🔁
+    tasksFeitas: Number, // 🔁
     isTeacher: {
         type: Boolean,
         default: false
@@ -291,16 +303,16 @@ var schemaUsers = new mongoose.Schema({
     birth: {
         type: String,
         default: null
-    },
-    codeRegister: String,
+    }, // ❌
+    codeRegister: String, // ❌
     id: {
         type: Number,
         default: 0
-    },
+    }, // ❌
     registerTime: {
         type: Number,
         default: null
-    },
+    }, // 🔁
 })
 
 var schemaMarkedTasks = new mongoose.Schema({
@@ -362,18 +374,12 @@ let schemaSchools = new mongoose.Schema({
 // NOVOS DADOS
 const schemaStudents = new mongoose.Schema({
     fullname: String,
-    birth: {
-        type: String,
-        default: null
-    },
-    turma: String,
-    tasksAtribuidas: {
-        type: Number,
-        default: 0
-    },
-    tasksFeitas: {
-        type: Number,
-        default: 0
+    email: String,
+    password: String,
+    createdAt: Number,
+    isTeacher: {
+        type: Boolean,
+        default: false
     },
     settings: {
         pushTasksCreated: {
@@ -417,47 +423,111 @@ const schemaStudents = new mongoose.Schema({
             default: false
         },
     },
-    isPunished: {
-        type: Boolean,
-        default: false
-    },
-    registerTime: {
-        type: Number,
-        default: null
-    },
-
-    email: {
-        type: String,
-        default: null
-    },
-    password: {
-        type: String,
-        default: null
-    },
-
+    roleData: {
+        classe: String,
+        isPunished: {
+            type: Boolean,
+            default: false
+        },
+        tasksAssigned: {
+            type: Number,
+            default: 0
+        },
+        tasksDone: {
+            type: Number,
+            default: 0
+        }
+    }
 })
+let NEW_USER_student = {
+    "fullname": "João da Silva Santos",
+    "email": "joaosilvasanto2006@gmail.com",
+    "password": "KD82JF4JFD384JD82J49K3D",
+    "createdAt": 1717073172000,
+    "isTeacher": false,
+    "settings": {},
+    "studentData": {
+        "classe": "3MA",
+        "isPunished": false,
+        "tasksAssigned": 31,
+        "tasksDone": 26
+    },
+    "teacherData": {}
+}
+
 
 const schemaTeachers = new mongoose.Schema({
     fullname: String,
-    birth: String,
-    matterId: String,
-    createdTasks: {
-        type: Number,
-        default: 0
+    email: String,
+    password: String,
+    createdAt: Number,
+    isTeacher: {
+        type: Boolean,
+        default: true
     },
-    email: {
-        type: String,
-        default: null
+    settings: {
+        pushTasksCreated: {
+            type: Boolean,
+            default: false
+        },
+        pushTasksToday: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks1Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks2Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks3Days: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks4Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks5Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks6Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks7Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks10Days: {
+            type: Boolean,
+            default: false
+        },
     },
-    password: {
-        type: String,
-        default: null
-    },
-    registerTime: {
-        type: Number,
-        default: null
-    },
+    roleData: {
+        matterId: String,
+        createdTasks: {
+            type: Number,
+            default: 0
+        },
+    }
 })
+let NEW_USER_teacher = {
+    "fullname": "João da Silva Santos",
+    "email": "joaosilvasanto2006@gmail.com",
+    "password": "KD82JF4JFD384JD82J49K3D",
+    "createdAt": 1717073172000,
+    "isTeacher": true,
+    "settings": {},
+    "studentData": {},
+    "teacherData": {
+        "matterId": "66005429a7013773a0465302 (MongoDB ID)",
+        "createdTasks": 7
+    }
+}
 
 const schemaClass = new mongoose.Schema({
     title: String,
@@ -1551,7 +1621,17 @@ api.get("/search/students", async (req, res) => {
     res.json(finded)
 })
 
+api.get("/students", async (req, res) => {
+    let valueSearch = req.query?.valueSearch || ""
+    console.log(valueSearch)
 
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTeachers = newConection.model("Student", schemaStudents)
+
+    let finded = await modelTeachers.find(valueSearch)
+
+    res.json(finded)
+})
 
 api.post("/adm/actions/student-punish", async (req, res) => {
     const student = req.body
@@ -1974,7 +2054,7 @@ api.delete("/adm/actions/teacher", async (req, res) => {
         let model = newConection.model("Teacher", schemaTeachers)
         let resp = await model.findByIdAndDelete(idUser)
         return res.json(resp)
-    } catch(erro) {
+    } catch (erro) {
         return res.status(400).json(erro)
     }
 })
@@ -1988,7 +2068,7 @@ api.post("/adm/actions/teacher", async (req, res) => {
         let model = newConection.model("Teacher", schemaTeachers)
         let resp = await new model(user).save()
         return res.json(resp)
-    } catch(erro) {
+    } catch (erro) {
         return res.status(400).json(erro)
     }
 })
@@ -2028,29 +2108,30 @@ api.get("/adm/statistics/classWithMoreTasks", async (req, res) => {
     const tasksCountByTurma = {}
     // Percorra todas as tarefas e conte quantas existem para cada turma
     tasks.forEach(task => {
-      const turma = task.turma
-      if (tasksCountByTurma[turma]) {
-        tasksCountByTurma[turma]++
-      } else {
-        tasksCountByTurma[turma] = 1
-      }
+        const turma = task.turma
+        if (tasksCountByTurma[turma]) {
+            tasksCountByTurma[turma]++
+        } else {
+            tasksCountByTurma[turma] = 1
+        }
     })
     // Encontre a turma com o maior número de tarefas
     let maxTasksTurma = null
     let maxTasksCount = 0
 
     Object.entries(tasksCountByTurma).forEach(([turma, count]) => {
-      if (count > maxTasksCount) {
-        maxTasksTurma = turma
-        maxTasksCount = count
-      }
+        if (count > maxTasksCount) {
+            maxTasksTurma = turma
+            maxTasksCount = count
+        }
     })
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true,
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, {
+        useNewUrlParser: true,
         useUnifiedTopology: true,
         dbName: req.header("School")
     })
-        
+
 
     const percentage = (maxTasksCount / totalTasks) * 100
 
@@ -2069,3 +2150,15 @@ api.post("/school", async (req, res) => {
 
     res.json(finded)
 })
+
+
+
+
+
+
+
+
+
+
+
+
