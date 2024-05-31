@@ -1629,6 +1629,7 @@ api.post("/students", async (req, res) => {
     let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = await modelStudents.find(valueSearch)
+    console.log(finded)
 
     res.json(finded)
 })
