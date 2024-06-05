@@ -1621,7 +1621,20 @@ api.get("/search/students", async (req, res) => {
     res.json(finded)
 })
 
-api.post("/students", async (req, res) => {
+api.post("/students/get", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelStudents = newConection.model("Student", schemaStudents)
+
+    let finded = await modelStudents.find(valueSearch)
+    console.log(finded)
+
+    res.json(finded)
+})
+
+api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
