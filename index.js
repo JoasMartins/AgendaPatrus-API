@@ -1626,11 +1626,7 @@ api.post("/students/get", async (req, res) => {
     console.log(valueSearch)
 
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
-    let modelStudents = newConection.model("students", schemaStudents)
-    let all = await modelStudents.find()
-    console.log("2----------")
-    console.log(req.header("School"))
-    console.log(newConection)
+    let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = await modelStudents.find(valueSearch)
     console.log(finded)
@@ -1638,19 +1634,22 @@ api.post("/students/get", async (req, res) => {
     res.json(finded)
 })
 
-api.post("/students", async (req, res) => {
-    let valueSearch = req.body
-    console.log(valueSearch)
+api.post("/students/add", async (req, res) => {
+    let student = req.body
+    console.log(student)
 
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelStudents = newConection.model("Student", schemaStudents)
 
-    
+    new model(student).save()
+    .then((resp) => {
+        res.json(resp)
+    })
+    .catch((erro) => {
+        res.status(400).json(erro)
+    })
 
-    let finded = await modelStudents.find(valueSearch)
-    console.log(finded)
-
-    res.json(finded)
+    res.json(null)
 })
 
 api.post("/adm/actions/student-punish", async (req, res) => {
