@@ -1326,14 +1326,9 @@ api.post("/crypto", async (req, res) => {
 api.get("/crypto", async (req, res) => {
     var dataString = req.query.crypto
     let key = appData.cryptoKey
-    
 
     let cryptoProcess = crypto.AES.decrypt(dataString, key)
-    console.log(cryptoProcess)
-    let newChange = cryptoProcess.toString()
-    console.log(newChange)
     let cryptoString = cryptoProcess.toString(crypto.enc.Utf8)
-    console.log(cryptoString)
     return res.status(200).json({ cryptoString })
 })
 
