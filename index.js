@@ -1641,7 +1641,7 @@ api.post("/students/add", async (req, res) => {
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelStudents = newConection.model("Student", schemaStudents)
 
-    new model(student).save()
+    new modelStudents(student).save()
     .then((resp) => {
         res.json(resp)
     })
