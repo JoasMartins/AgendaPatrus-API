@@ -1629,7 +1629,8 @@ api.post("/students/get", async (req, res) => {
     let modelStudents = newConection.model("students", schemaStudents)
     let all = await modelStudents.find()
     console.log("2----------")
-    console.log(all)
+    console.log(req.header("School"))
+    console.log(newConection)
 
     let finded = await modelStudents.find(valueSearch)
     console.log(finded)
