@@ -723,6 +723,38 @@ api.post("/tasks", async (req, res) => {
     */
 })
 
+//🆕
+api.post("/tasks/add", async (req, res) => {
+    let taskData = req.body
+
+    let taskSend = {
+        title: taskData.title,
+        description: taskData.description,
+        type: taskData.type,
+        date: taskData.date,
+        turma: taskData.turma
+    }
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelStudents = newConection.model("Student", schemaStudents)
+    let modelTasks = newConection.model("Task", schemaTasks)
+    
+    try {
+        await modelStudents.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
+        new modelTasks(taskSend).save()
+            .then((data) => { return res.status(200).json(data) })
+    }
+    catch (error) {
+        console.error(error)
+        return res.status(400).json(error)
+    }
+
+    /* DADOS NECESSÁRIOS:
+    turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
+    score - NUMBER - quantidade da valor a modificar (opcional)
+    */
+})
+
 api.delete("/tasks", async (req, res) => {
     var contentFind = req.body
     if (Object.keys(contentFind).length === 0) {
@@ -1633,6 +1665,7 @@ api.get("/search/students", async (req, res) => {
     res.json(finded)
 })
 
+//🆕
 api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
@@ -2183,7 +2216,22 @@ api.post("/school", async (req, res) => {
 })
 
 
+// ===== NOVO PADRÃO DE ROTAS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+// --> Professores
+//🆕
+api.post("/teachers/get", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTeachers = newConection.model("Teacher", schemaTeachers)
+
+    let finded = await modelTeachers.find(valueSearch)
+    console.log(finded)
+
+    res.json(finded)
+})
 
 
 
