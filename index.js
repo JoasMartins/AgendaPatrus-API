@@ -615,6 +615,18 @@ api.get("/", async (req, res) => {
 
 // |||||====||||| tarefas |||||====|||||
 
+//🆕
+api.post("/tasks/get", async (req, res) => {
+    let valueSearch = req.body
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelTasks = newConection.model("Task", schemaTasks)
+    
+    let items = await modelTasks.find(valueSearch)
+    console.log(items)
+    return res.status(200).json(items)
+})
+
 api.get("/tasks", async (req, res) => {
     let items = await modelTask.find()
 
