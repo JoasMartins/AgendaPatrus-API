@@ -2235,6 +2235,23 @@ api.post("/teachers/get", async (req, res) => {
 
 
 
+// --> Matérias
+//🆕
+api.post("/matters/get", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelMatters = newConection.model("Matter", schemaMatter)
+
+    let finded = await modelMatters.find(valueSearch)
+    console.log(finded)
+
+    res.json(finded)
+})
+
+
+
 
 
 
