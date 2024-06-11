@@ -198,22 +198,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
 
 // -------------------------------------------------------------
 
-var schemaTasks = new mongoose.Schema({
-    title: String,
-    description: String,
-    type: String,
-    date: Number,
-    turma: String,
-    matterId: String,
-    id: {
-        type: Number,
-        default: 0
-    },
-    registerTime: {
-        type: Number,
-        default: null
-    },
-})
+
 
 var schemaLogAlerts = new mongoose.Schema({
     name: String,
@@ -228,18 +213,6 @@ var schemaLogAlerts = new mongoose.Schema({
         default: null
     },
 })
-
-
-
-
-
-
-
-
-
-
-
-
 
 var schemaUsers = new mongoose.Schema({
     fullname: String,
@@ -529,6 +502,52 @@ let NEW_USER_teacher = {
     }
 }
 
+var ANTIGOschemaTasks = new mongoose.Schema({
+    title: String,
+    description: String,
+    type: String,
+    date: Number,
+    turma: String,
+    matterId: String,
+    id: {
+        type: Number,
+        default: 0
+    },
+    registerTime: {
+        type: Number,
+        default: null
+    },
+})
+var schemaTasks = new mongoose.Schema({
+    title: String,
+    description: String,
+    type: String,
+    date: Number,
+    value: {
+        type: Number,
+        default: null
+    },
+    classeId: String,
+    matterId: String,
+    authorId: String,
+    createdAt: {
+        type: Number,
+        default: null
+    },
+})
+let NEW_TASK = {
+    "title": "Teorema de Pitágoras",
+    "description": "15 linhas explicando o que é o Teorema de Pitágoras e suas aplicações.",
+    "type": "Trabalho",
+    "date": 178656457,
+    "value": 5,
+    "classeId": "<ID da Turma>",
+    "matterId": "<ID da Matéria>",
+    "authorId": "<ID de quem criou>",
+    "createdAt": 168656457
+}
+
+
 const schemaClass = new mongoose.Schema({
     title: String,
     isReserved: {
@@ -556,6 +575,15 @@ const schemaTokens = new mongoose.Schema({
     },
 })
 
+const schemaStatusTasks = new mongoose.Schema({
+    userId: String,
+    taskId: String,
+    done: {
+        type: Boolean,
+        default: false
+    }
+})
+
 
 async function increment(next) {
     const doc = this;
@@ -567,7 +595,7 @@ async function increment(next) {
         //const lastUser = await this.constructor.findOne({}, {}, { sort: { id: -1 } });
         //const lastId = lastUser ? lastUser.id : 0;
 
-        doc.registerTime = Date.now()
+        doc.createdAt = Date.now()
         //doc.id = lastId + 1;
         return next();
     } catch (error) {
@@ -588,6 +616,7 @@ schemaTeachers.pre('save', increment)
 schemaClass.pre('save', increment)
 schemaTokens.pre('save', increment)
 schemaMatter.pre('save', increment)
+schemaStatusTasks.pre('save', increment)
 
 const modelTask = mongoose.model("Task", schemaTasks)
 const modelLogAlerts = mongoose.model("LogAlert", schemaLogAlerts)
@@ -615,17 +644,7 @@ api.get("/", async (req, res) => {
 
 // |||||====||||| tarefas |||||====|||||
 
-//🆕
-api.post("/tasks/get", async (req, res) => {
-    let valueSearch = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
-    let modelTasks = newConection.model("Task", schemaTasks)
-    
-    let items = await modelTasks.find(valueSearch)
-    console.log(items)
-    return res.status(200).json(items)
-})
 
 api.get("/tasks", async (req, res) => {
     let items = await modelTask.find()
@@ -723,37 +742,7 @@ api.post("/tasks", async (req, res) => {
     */
 })
 
-//🆕
-api.post("/tasks/add", async (req, res) => {
-    let taskData = req.body
 
-    let taskSend = {
-        title: taskData.title,
-        description: taskData.description,
-        type: taskData.type,
-        date: taskData.date,
-        turma: taskData.turma
-    }
-
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
-    let modelStudents = newConection.model("Student", schemaStudents)
-    let modelTasks = newConection.model("Task", schemaTasks)
-    
-    try {
-        await modelStudents.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
-        new modelTasks(taskSend).save()
-            .then((data) => { return res.status(200).json(data) })
-    }
-    catch (error) {
-        console.error(error)
-        return res.status(400).json(error)
-    }
-
-    /* DADOS NECESSÁRIOS:
-    turma - STRING - turma dos usuarios que deseja adicionar o valor de tarefas atribuidas
-    score - NUMBER - quantidade da valor a modificar (opcional)
-    */
-})
 
 api.delete("/tasks", async (req, res) => {
     var contentFind = req.body
@@ -1687,12 +1676,12 @@ api.post("/students/add", async (req, res) => {
     let modelStudents = newConection.model("Student", schemaStudents)
 
     new modelStudents(student).save()
-    .then((resp) => {
-        res.json(resp)
-    })
-    .catch((erro) => {
-        res.status(400).json(erro)
-    })
+        .then((resp) => {
+            res.json(resp)
+        })
+        .catch((erro) => {
+            res.status(400).json(erro)
+        })
 
     res.json(null)
 })
@@ -2216,7 +2205,8 @@ api.post("/school", async (req, res) => {
 })
 
 
-// ===== NOVO PADRÃO DE ROTAS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// ===== NOVO PADRÃO DE ROTAS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕🆕
 
 // --> Professores
 //🆕
@@ -2251,10 +2241,72 @@ api.post("/matters/get", async (req, res) => {
 })
 
 
+// --> Tarefas
+//🆕
+api.post("/tasks/get", async (req, res) => {
+    let valueSearch = req.body
+
+    try {
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let modelTasks = newConection.model("Task", schemaTasks)
+
+        let items = await modelTasks.find(valueSearch)
+        return res.status(200).json(items)
+    } catch (error) {
+        console.error('Erro ao buscar tarefas:', error);
+        res.status(500).json({ error: 'Erro ao buscar tarefas.' });
+    }
+
+})
+
+//🆕
+api.post("/tasks/add", async (req, res) => {
+    let taskData = req.body
+
+    try {
+        let taskSend = {
+            title: taskData.title,
+            description: taskData.description,
+            type: taskData.type,
+            date: taskData.date,
+            value: taskData.value || null,
+            classeId: taskData.classe,
+            matterId: taskData.matter,
+            authorId: taskData.author,
+        }
+
+        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let modelStudents = newConection.model("Student", schemaStudents)
+        let modelTasks = newConection.model("Task", schemaTasks)
+        let modelStatusTasks = newConection.model("StatusTask", schemaStatusTasks)
+
+        //await modelStudents.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
+        let task = new modelTasks(taskSend)
+        await task.save()
+
+        let students = await modelStudents.find({ classe: taskData?.roleData?.classe })
+        const studentTasksPromises = students.map(student => {
+            const studentTask = new modelStatusTasks({
+                userId: student._id,
+                classeId: task._id
+            })
+            return studentTask.save()
+        })
+
+        await Promise.all(studentTasksPromises)
+        res.status(201).json(task)
+    } catch (error) {
+        console.error('Erro ao criar tarefa:', error);
+        res.status(500).json({ error: 'Erro ao criar tarefa' });
+    }
+})
 
 
+// --> Status de Tarefas
+api.post("/statustasks/get", async (req, res) => {
 
+})
 
+api.post("/statustasks/set", async (req, res) => {
 
-
-
+})
