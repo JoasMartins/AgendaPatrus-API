@@ -397,7 +397,7 @@ const schemaStudents = new mongoose.Schema({
         },
     },
     roleData: {
-        classe: String,
+        classeId: String,
         isPunished: {
             type: Boolean,
             default: false
@@ -2313,6 +2313,24 @@ api.post("/statustasks/get", async (req, res) => {
 api.post("/statustasks/set", async (req, res) => {
 
 })
+
+
+// --> Turmas
+//🆕
+api.post("/classes/get", async (req, res) => {
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelClasses = newConection.model("Classe", schemaClass)
+
+    let finded = await modelClasses.find(valueSearch)
+    console.log(finded)
+
+    res.json(finded)
+})
+
+
 
 api.get("/test", async (req, res) => {
     console.log("TEST foi chamado")
