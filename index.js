@@ -2270,9 +2270,9 @@ api.post("/tasks/add", async (req, res) => {
             type: taskData.type,
             date: taskData.date,
             value: taskData.value || null,
-            classeId: taskData.classe,
-            matterId: taskData.matter,
-            authorId: taskData.author,
+            classeId: taskData.classeId,
+            matterId: taskData.matterId,
+            authorId: taskData.authorId,
         }
 
         console.log("===== CONSOLE - DATA TASK")
