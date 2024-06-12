@@ -2275,6 +2275,9 @@ api.post("/tasks/add", async (req, res) => {
             authorId: taskData.author,
         }
 
+        console.log("===== CONSOLE - DATA TASK")
+        console.log(taskSend)
+
         let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
         let modelStudents = newConection.model("Student", schemaStudents)
         let modelTasks = newConection.model("Task", schemaTasks)
@@ -2318,7 +2321,7 @@ api.get("/test", async (req, res) => {
     console.log(state)
 
     if(state != 1) {
-        return res.status(404).json(state)
+        return res.status(400).json(state)
     } else {
         return res.status(200).json(state)
     }
