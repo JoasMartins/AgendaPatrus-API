@@ -2310,3 +2310,12 @@ api.post("/statustasks/get", async (req, res) => {
 api.post("/statustasks/set", async (req, res) => {
 
 })
+
+api.get("/test", async (req, res) => {
+    console.log("TEST foi chamado")
+    
+    let state = mongoose.connection.readyState
+    console.log(state)
+
+    return res.status(200).json(state)
+})
