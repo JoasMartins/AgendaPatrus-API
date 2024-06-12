@@ -2317,5 +2317,9 @@ api.get("/test", async (req, res) => {
     let state = mongoose.connection.readyState
     console.log(state)
 
-    return res.status(200).json(state)
+    if(state != 1) {
+        return res.status(404).json(state)
+    } else {
+        return res.status(200).json(state)
+    }
 })
