@@ -46,8 +46,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
     .then((connection) => {
         const dbName = connection.connections[0].client.s.options.srvHost
         console.log(`🟢 | MongoDB conectada com sucesso!\n---> ${dbName}`)
-        api.listen(4000, async () => {
-            console.log("🟢 | API ligada com sucesso!")
+
 
             const sendNotification = async (diasRestantesSelecionado) => {
                 const milliseconds = Date.now()
@@ -188,14 +187,16 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
             //  FAZER: Nas notificações da restando mais de 0 dias, as tarefas que o user ja marcou
             //      como feito não será incluso em "text"
         })
-
-    })
     .catch((err) => {
         console.log(err)
         console.log("❌ | MongoDB não foi conectado!")
-        console.log("❌ | API não foi ligada devido a não conexão com banco de dados!")
+        //console.log("❌ | API não foi ligada devido a não conexão com banco de dados!")
     })
 
+
+api.listen(4000, async () => {
+    console.log("🟢 | API ligada com sucesso!")
+})
 // -------------------------------------------------------------
 
 
@@ -351,6 +352,10 @@ const schemaStudents = new mongoose.Schema({
     password: String,
     createdAt: Number,
     isTeacher: {
+        type: Boolean,
+        default: false
+    },
+    isRepresentative: {
         type: Boolean,
         default: false
     },
@@ -2332,15 +2337,12 @@ api.post("/classes/get", async (req, res) => {
 
 
 
-api.get("/test", async (req, res) => {
-    console.log("TEST foi chamado")
-    
-    let state = mongoose.connection.readyState
-    console.log(state)
+api.get("/status", async (req, res) => {
+    console.log("STATUS foi chamado")
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
 
-    if(state != 1) {
-        return res.status(400).json(state)
-    } else {
-        return res.status(200).json(state)
-    }
+    res.status(200).json({
+      status: 'API está funcionando',
+      dbStatus: dbStatus
+    });
 })
