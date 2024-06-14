@@ -306,15 +306,8 @@ var schemaMarkedTasks = new mongoose.Schema({
 var schemaDevices = new mongoose.Schema({
     userId: String,
     email: String,
-    profileId: String,
-    id: {
-        type: Number,
-        default: 0
-    },
-    registerTime: {
-        type: Number,
-        default: null
-    },
+    deviceId: String,
+    createdAt: Number,
 })
 
 let schemaAppinfos = new mongoose.Schema({
@@ -1336,22 +1329,19 @@ api.post("/devices/add", async (req, res) => {
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelDevices = newConection.model("Device", schemaDevices)
 
-    new modelDevices(modelSendDevice).save()
+    new modelDevices(deviceData).save()
         .then((data) => { return res.status(200).json(data) })
         .catch((err) => { return res.status(400).json(err) })
 
 })
 
 api.put("/devices", async (req, res) => {
-    var contentFind = req.body
-    if (Object.keys(contentFind).length === 0) {
-        contentFind = req.query
-    }
-    if (contentFind?.params) {
-        contentFind = contentFind.params
-    }
+    var deviceData = req.body
 
-    await modelDevices.findOneAndUpdate({ userId: contentFind.deviceId }, { $set: contentFind })
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelDevices = newConection.model("Device", schemaDevices)
+
+    await modelDevices.findOneAndUpdate({ deviceId: deviceData.deviceId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 })
