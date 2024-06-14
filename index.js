@@ -1313,20 +1313,28 @@ api.delete("/scores/tasksassigned/users", async (req, res) => {
 
 
 // |||||====||||| dispositivos |||||====|||||
+//🆕
+api.post("/devices/get", async (req, res) => {
+    let filters = req.body
 
-api.get("/devices", async (req, res) => {
-    let resp = await modelDevices.find()
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelDevices = newConection.model("Device", schemaDevices)
+    let resp = await modelDevices.find(filters)
 
     return res.status(200).json(resp)
 })
 
-api.post("/devices", async (req, res) => {
+//🆕
+api.post("/devices/add", async (req, res) => {
     let deviceData = req.body
 
     let modelSendDevice = {
         userId: deviceData.userId,
         email: deviceData.email || "",
     }
+
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let modelDevices = newConection.model("Device", schemaDevices)
 
     new modelDevices(modelSendDevice).save()
         .then((data) => { return res.status(200).json(data) })
