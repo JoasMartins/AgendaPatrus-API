@@ -1335,7 +1335,7 @@ api.post("/devices/add", async (req, res) => {
 
 })
 
-api.put("/devices", async (req, res) => {
+api.post("/devices/put", async (req, res) => {
     var deviceData = req.body
 
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
