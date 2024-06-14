@@ -1341,7 +1341,7 @@ api.put("/devices", async (req, res) => {
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelDevices = newConection.model("Device", schemaDevices)
 
-    await modelDevices.findOneAndUpdate({ deviceId: deviceData.deviceId }, { $set: deviceData })
+    await modelDevices.findOneAndUpdate({ _id: deviceData.userId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 })
