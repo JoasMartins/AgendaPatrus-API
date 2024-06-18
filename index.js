@@ -1337,9 +1337,13 @@ api.post("/devices/add", async (req, res) => {
 
 api.post("/devices/put", async (req, res) => {
     var deviceData = req.body
+    //  🔴🔴🔴🔴 CONTINUAR DAQUI 🟡🟡🟡🟡
+    //ERRO em atualizar o deviceId no Banco de Dados
 
     let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelDevices = newConection.model("Device", schemaDevices)
+    console.log("=== deviceData ===")
+    console.log(deviceData)
 
     await modelDevices.findOneAndUpdate({ _id: deviceData.userId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
