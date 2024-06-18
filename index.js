@@ -1345,6 +1345,9 @@ api.post("/devices/put", async (req, res) => {
     console.log("=== deviceData ===")
     console.log(deviceData)
 
+    console.log("=== user encontrado pra modificar ===")
+    console.log(await modelDevices.findOne({ _id: deviceData.userId }))
+
     await modelDevices.findOneAndUpdate({ _id: deviceData.userId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
