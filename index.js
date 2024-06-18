@@ -1340,7 +1340,7 @@ api.post("/devices/put", async (req, res) => {
     //  🔴🔴🔴🔴 CONTINUAR DAQUI 🟡🟡🟡🟡
     //ERRO em atualizar o deviceId no Banco de Dados
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, dbName: req.header("School") })
+    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
     let modelDevices = newConection.model("Device", schemaDevices)
     console.log("=== deviceData ===")
     console.log(deviceData)
@@ -1348,14 +1348,14 @@ api.post("/devices/put", async (req, res) => {
     console.log("=== user encontrado pra modificar ===")
     console.log(await modelDevices.findOne({ _id: deviceData.userId }))
 
-    await modelDevices.findOneAndUpdate({ _id: deviceData.userId }, { $set: deviceData })
+    await modelDevices.findByIdAndUpdate({ _id: deviceData.userId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
         .catch((err) => { res.status(400).json(err) })
 })
 
 // |||||====||||| ------------------ |||||====|||||
 
-// |||||====||||| cryptografia |||||====|||||
+// |||||====||||| cryptografia |||||====|||||S
 
 api.post("/crypto", async (req, res) => {
     var dataString = req.body.crypto
