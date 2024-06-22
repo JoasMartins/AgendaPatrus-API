@@ -42,7 +42,16 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000, // Aumenta o tempo de espera para seleção do servidor
+    connectTimeoutMS: 10000, // Aumenta o tempo de espera para estabelecer a conexão
+    socketTimeoutMS: 45000, // Aumenta o tempo de espera para operações de socket
+    tls: true // Habilita TLS
+};
+
+mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
     .then((connection) => {
         const dbName = connection.connections[0].client.s.options.srvHost
         console.log(`🟢 | MongoDB conectada com sucesso!\n---> ${dbName}`)
@@ -197,6 +206,18 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL")
 api.listen(4000, async () => {
     console.log("🟢 | API ligada com sucesso!")
 })
+
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to ' + dbURI);
+});
+
+mongoose.connection.on('error', (err) => {
+    console.log('Mongoose connection error: ' + err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose disconnected');
+});
 // -------------------------------------------------------------
 
 
