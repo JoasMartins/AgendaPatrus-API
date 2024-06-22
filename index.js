@@ -57,7 +57,7 @@ function connectSchool(nameSchool) {
             connectTimeoutMS: 10000, // Aumenta o tempo de espera para estabelecer a conexão
             socketTimeoutMS: 45000, // Aumenta o tempo de espera para operações de socket
             tls: true, // Habilita TLS
-            dbName: req.header("School")
+            dbName: nameSchool
         })
         console.log("NOVA CONXEXÃO CRIADA!")
     }
