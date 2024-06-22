@@ -219,6 +219,11 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
         //console.log("❌ | API não foi ligada devido a não conexão com banco de dados!")
     })
 
+setInterval(() => {
+    let connections = mongoose.connections
+    console.log(`🔌 - Conexões:`)
+    console.log(connections)
+}, 10000)
 
 api.listen(4000, async () => {
     console.log("🟢 | API ligada com sucesso!")
