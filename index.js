@@ -51,9 +51,11 @@ async function withNewConnection(dbName, callback) {
 
     try {
         const result = await callback(newConnection);
+        console.log("🟡 Conexão criada...")
         return result;
     } finally {
         await newConnection.close();
+        console.log("🟢 Conexão encerrada!")
     }
 }
 
@@ -223,7 +225,7 @@ api.listen(4000, async () => {
 })
 
 mongoose.connection.on('connected', () => {
-    console.log('Mongoose connected to ' + dbURI);
+    console.log('Mongoose connected to ' + process.env.DATABASE_URL);
 });
 
 mongoose.connection.on('error', (err) => {
