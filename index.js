@@ -47,7 +47,20 @@ const transporter = nodemailer.createTransport({
 //let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
 
 function connectSchool(nameSchool) {
-    return mongoose.connections.find(connection => connection.name == nameSchool)
+    let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
+    if(!newConection) {
+        newConection = mongoose.createConnection(process.env.DATABASE_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000, // Aumenta o tempo de espera para seleção do servidor
+            connectTimeoutMS: 10000, // Aumenta o tempo de espera para estabelecer a conexão
+            socketTimeoutMS: 45000, // Aumenta o tempo de espera para operações de socket
+            tls: true, // Habilita TLS
+            dbName: req.header("School")
+        })
+    }
+    
+    return newConection
 }
 
 async function withNewConnection(dbName, callback) {
