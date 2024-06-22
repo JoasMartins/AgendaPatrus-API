@@ -222,7 +222,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 setInterval(() => {
     let connections = mongoose.connections
     console.log(`🔌 - Conexões:`)
-    console.log(connections)
+    console.log(connections.map(connection => connection.name))
 }, 10000)
 
 api.listen(4000, async () => {
