@@ -42,6 +42,14 @@ const transporter = nodemailer.createTransport({
     }
 })
 
+//let connections = mongoose.connections
+
+//let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
+
+function connectSchool(nameSchool) {
+    return mongoose.connections.map(connection => connection.name == nameSchool)
+}
+
 async function withNewConnection(dbName, callback) {
     const newConnection = mongoose.createConnection(process.env.DATABASE_URL, {
         useNewUrlParser: true,
@@ -2374,10 +2382,18 @@ api.post("/classes/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
+    let connection = connectSchool(req.header("School"))
+    console.log("==== Conexão verify")
+    console.log(connection)
+    let modelClasses = connection.model("Classe", schemaClass)
+    let finded = await modelClasses.find(valueSearch)
+
+    /*
     let finded = withNewConnection(req.header("School"), async (conn) => {
         let modelClasses = conn.model("Classe", schemaClass)
         return await modelClasses.find(valueSearch)
     })
+    */
 
     
     //let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
