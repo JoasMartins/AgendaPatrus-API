@@ -47,6 +47,7 @@ const transporter = nodemailer.createTransport({
 //let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
 
 function connectSchool(nameSchool) {
+    console.log(nameSchool)
     let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
     if(!newConection) {
         newConection = mongoose.createConnection(process.env.DATABASE_URL, {
@@ -58,6 +59,7 @@ function connectSchool(nameSchool) {
             tls: true, // Habilita TLS
             dbName: req.header("School")
         })
+        console.log("NOVA CONXEXÃO CRIADA!")
     }
     
     return newConection
