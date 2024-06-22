@@ -47,7 +47,7 @@ const transporter = nodemailer.createTransport({
 //let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
 
 function connectSchool(nameSchool) {
-    return mongoose.connections.map(connection => connection.name == nameSchool)
+    return mongoose.connections.find(connection => connection.name == nameSchool)
 }
 
 async function withNewConnection(dbName, callback) {
