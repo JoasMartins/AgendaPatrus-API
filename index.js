@@ -1376,7 +1376,7 @@ api.delete("/scores/tasksassigned/users", async (req, res) => {
 api.post("/devices/get", async (req, res) => {
     let filters = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelDevices = newConection.model("Device", schemaDevices)
     let resp = await modelDevices.find(filters)
 
@@ -1392,7 +1392,7 @@ api.post("/devices/add", async (req, res) => {
         email: deviceData.email || "",
     }
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelDevices = newConection.model("Device", schemaDevices)
 
     new modelDevices(deviceData).save()
@@ -1406,7 +1406,7 @@ api.post("/devices/put", async (req, res) => {
     //  🔴🔴🔴🔴 CONTINUAR DAQUI 🟡🟡🟡🟡
     //ERRO em atualizar o deviceId no Banco de Dados
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelDevices = newConection.model("Device", schemaDevices)
     console.log("=== deviceData ===")
     console.log(deviceData)
@@ -1700,7 +1700,7 @@ api.get("/search/students", async (req, res) => {
     let valueSearch = req.query?.valueSearch || ""
     let filter = req.query?.filter || ""
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = []
@@ -1735,7 +1735,7 @@ api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = await modelStudents.find(valueSearch)
@@ -1748,7 +1748,7 @@ api.post("/students/add", async (req, res) => {
     let student = req.body
     console.log(student)
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelStudents = newConection.model("Student", schemaStudents)
 
     new modelStudents(student).save()
@@ -1765,7 +1765,7 @@ api.post("/students/add", async (req, res) => {
 api.post("/adm/actions/student-punish", async (req, res) => {
     const student = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Student", schemaStudents)
     await model.findByIdAndUpdate(student._id, { isPunished: true })
         .then((resp) => {
@@ -1779,7 +1779,7 @@ api.post("/adm/actions/student-punish", async (req, res) => {
 api.post("/adm/actions/student-unpunish", async (req, res) => {
     const student = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Student", schemaStudents)
     await model.findByIdAndUpdate(student._id, { isPunished: false })
         .then((resp) => {
@@ -1793,7 +1793,7 @@ api.post("/adm/actions/student-unpunish", async (req, res) => {
 api.put("/adm/actions/student", async (req, res) => {
     const dataModify = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Student", schemaStudents)
     await model.findByIdAndUpdate(dataModify._id, dataModify)
         .then((resp) => {
@@ -1807,7 +1807,7 @@ api.put("/adm/actions/student", async (req, res) => {
 api.delete("/adm/actions/student", async (req, res) => {
     const idStudent = req.query?.idStudent
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Student", schemaStudents)
     await model.findByIdAndDelete(idStudent)
         .then((resp) => {
@@ -1821,7 +1821,7 @@ api.delete("/adm/actions/student", async (req, res) => {
 api.post("/adm/actions/student", async (req, res) => {
     const student = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Student", schemaStudents)
 
     new model(student).save()
@@ -1837,7 +1837,7 @@ api.post("/adm/actions/student-resetpassword", async (req, res) => {
     const student = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let model = newConection.model("Student", schemaStudents)
 
         model.findByIdAndUpdate(student?._id, {
@@ -1854,7 +1854,7 @@ api.post("/adm/actions/student-add", async (req, res) => {
     const student = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let model = newConection.model("Student", schemaStudents)
 
         new model({
@@ -1877,7 +1877,7 @@ api.get("/adm/actions/class-search", async (req, res) => {
     let valueSearch = req.query?.valueSearch || ""
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelClass = newConection.model("Classes", schemaClass)
 
         let finded = await newModelClass.find()
@@ -1891,7 +1891,7 @@ api.post("/adm/actions/class-add", async (req, res) => {
     const turma = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelClass = newConection.model("Classes", schemaClass)
 
         new newModelClass(turma).save()
@@ -1911,7 +1911,7 @@ api.get("/adm/actions/class-students", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelStudent = newConection.model("Student", schemaStudents)
 
         let finded = await newModelStudent.find({ turma: valueSearch })
@@ -1929,7 +1929,7 @@ api.get("/adm/actions/class-tasks", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelTasks = newConection.model("Task", schemaTasks)
 
         let finded = await newModelTasks.find({ turma: valueSearch })
@@ -1947,7 +1947,7 @@ api.post("/adm/actions/class-reserved", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelClass = newConection.model("Classes", schemaClass)
 
         let classState = await newModelClass.findById(valueSearch?.id)
@@ -1975,7 +1975,7 @@ api.delete("/adm/actions/class-delete", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelClass = newConection.model("Classes", schemaClass)
 
         await newModelClass.findByIdAndDelete(valueSearch?.id)
@@ -1995,7 +1995,7 @@ api.get("/adm/actions/matter-search", async (req, res) => {
     let valueSearch = req.query?.valueSearch || ""
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelMatters = newConection.model("Matters", schemaMatter)
 
         let finded = await newModelMatters.find({})
@@ -2009,7 +2009,7 @@ api.post("/adm/actions/matter-add", async (req, res) => {
     const matter = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelMatter = newConection.model("Matter", schemaMatter)
 
         new newModelMatter(matter).save()
@@ -2025,7 +2025,7 @@ api.put("/adm/actions/matter-edit", async (req, res) => {
     const dataEdit = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelMatter = newConection.model("Matter", schemaMatter)
 
         await newModelMatter.findByIdAndUpdate(dataEdit?.id, dataEdit?.update)
@@ -2045,7 +2045,7 @@ api.get("/adm/actions/matter-teachers", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelTeacher = newConection.model("Teacher", schemaTeachers)
 
         let finded = await newModelTeacher.find({ matterId: valueSearch })
@@ -2063,7 +2063,7 @@ api.get("/adm/actions/matter-tasks", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelTasks = newConection.model("Task", schemaTasks)
 
         let finded = await newModelTasks.find({ matterId: valueSearch })
@@ -2082,7 +2082,7 @@ api.post("/adm/actions/matter-reserved", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelClass = newConection.model("Classes", schemaClass)
 
         let classState = await newModelClass.findById(valueSearch?.id)
@@ -2109,7 +2109,7 @@ api.delete("/adm/actions/matter-delete", async (req, res) => {
     }
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let newModelMatter = newConection.model("Matter", schemaMatter)
 
         await newModelMatter.findByIdAndDelete(valueSearch?.id)
@@ -2131,7 +2131,7 @@ api.get("/adm/actions/teacher", async (req, res) => {
     let valueSearch = req.query?.valueSearch || ""
     let filter = req.query?.filter || ""
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelTeachers = newConection.model("Teacher", schemaTeachers)
 
     let finded = await modelTeachers.find({ fullname: { $regex: valueSearch, $options: 'i' } })
@@ -2143,7 +2143,7 @@ api.get("/adm/actions/teacher", async (req, res) => {
 api.put("/adm/actions/teacher", async (req, res) => {
     const dataModify = req.body
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let model = newConection.model("Teacher", schemaTeachers)
 
     await model.findByIdAndUpdate(dataModify._id, dataModify)
@@ -2160,7 +2160,7 @@ api.post("/adm/actions/teacher-resetpassword", async (req, res) => {
     let user = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let model = newConection.model("Teacher", schemaTeachers)
 
         model.findByIdAndUpdate(user?._id, {
@@ -2179,7 +2179,7 @@ api.delete("/adm/actions/teacher", async (req, res) => {
     let idUser = req.query?.idUser
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let model = newConection.model("Teacher", schemaTeachers)
         let resp = await model.findByIdAndDelete(idUser)
         return res.json(resp)
@@ -2193,7 +2193,7 @@ api.post("/adm/actions/teacher", async (req, res) => {
     const user = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let model = newConection.model("Teacher", schemaTeachers)
         let resp = await new model(user).save()
         return res.json(resp)
@@ -2206,7 +2206,7 @@ api.post("/adm/actions/teacher", async (req, res) => {
 
 //==================== ADM - OUTROS ====================//
 api.get("/adm/tasks", async (req, res) => {
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelTasks = newConection.model("Task", schemaTasks)
 
     let finded = await modelTasks.find()
@@ -2217,7 +2217,7 @@ api.get("/adm/tasks", async (req, res) => {
 
 //==================== ADM - ESTATISTICAS ====================//
 api.get("/statistics/tasks", async (req, res) => {
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelTasks = newConection.model("Task", schemaTasks)
 
     let finded = await modelTasks.find()
@@ -2290,7 +2290,7 @@ api.post("/teachers/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    let newConection= connectSchool(req.header("School"))
     let modelTeachers = newConection.model("Teacher", schemaTeachers)
 
     let finded = await modelTeachers.find(valueSearch)
@@ -2307,7 +2307,8 @@ api.post("/matters/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
-    let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    connection
+    let newConection= connectSchool(req.header("School"))
     let modelMatters = newConection.model("Matter", schemaMatter)
 
     let finded = await modelMatters.find(valueSearch)
@@ -2323,8 +2324,8 @@ api.post("/tasks/get", async (req, res) => {
     let valueSearch = req.body
 
     try {
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
-        let modelTasks = newConection.model("Task", schemaTasks)
+        let connection = connectSchool(req.header("School"))
+        let modelTasks = connection.model("Task", schemaTasks)
 
         let items = await modelTasks.find(valueSearch)
         return res.status(200).json(items)
@@ -2354,7 +2355,7 @@ api.post("/tasks/add", async (req, res) => {
         console.log("===== CONSOLE - DATA TASK")
         console.log(taskSend)
 
-        let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+        let newConection= connectSchool(req.header("School"))
         let modelStudents = newConection.model("Student", schemaStudents)
         let modelTasks = newConection.model("Task", schemaTasks)
         let modelStatusTasks = newConection.model("StatusTask", schemaStatusTasks)
@@ -2411,7 +2412,7 @@ api.post("/classes/get", async (req, res) => {
     */
 
     
-    //let newConection = mongoose.createConnection(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, dbName: req.header("School") })
+    //let newConection= connectSchool(req.header("School"))
     //let modelClasses = newConection.model("Classe", schemaClass)
 
     //let finded = await modelClasses.find(valueSearch)
