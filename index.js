@@ -2307,7 +2307,6 @@ api.post("/matters/get", async (req, res) => {
     let valueSearch = req.body
     console.log(valueSearch)
 
-    connection
     let newConection= connectSchool(req.header("School"))
     let modelMatters = newConection.model("Matter", schemaMatter)
 
