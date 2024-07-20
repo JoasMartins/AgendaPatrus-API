@@ -1,16 +1,17 @@
-const express = require("express")
-const axios = require("axios")
-const api = express()
-const bodyParser = require("body-parser")
-const mongoose = require("mongoose")
-const appData = require("./appData.json")
-const crypto = require("crypto-js")
-const nodemailer = require("nodemailer")
-const multer = require("multer")
-const xlsx = require("xlsx")
-const cors = require('cors');
-const { v4 } = require("uuid")
+import express from 'express';
+import axios from 'axios';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import appData from './appData.json' assert { type: 'json' };
+import crypto from 'crypto-js';
+import nodemailer from 'nodemailer';
+import multer from 'multer';
+import xlsx from 'xlsx';
+import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
 require('dotenv').config()
+
+const api = express();
 
 import schemaTasksDone from "./schemas/TasksDone.js"
 //const { schemaTasksDone } = require("./schemas/TasksDone")
