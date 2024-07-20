@@ -2525,7 +2525,7 @@ api.post("/tasksdone/delete", async (req, res) => {
         let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
         let taskDone = await modelTasksDone.findOneAndDelete(valueSearch)
         
-        res.status(201).json(taskDone)
+        res.status(200).json(taskDone)
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
