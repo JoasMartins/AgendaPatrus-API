@@ -9,7 +9,9 @@ import multer from 'multer';
 import xlsx from 'xlsx';
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
-require('dotenv').config()
+//require('dotenv').config()
+import dotenv from "dotenv"
+dotenv.config()
 
 const api = express();
 
