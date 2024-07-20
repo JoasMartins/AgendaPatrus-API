@@ -2484,7 +2484,9 @@ api.post("/tasksdone/add", async (req, res) => {
         let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
         console.log(modelTasksDone)
 
-        let taskDone = new modelTasksDone(data).save()
+        let taskDone = new modelTasksDone(data)
+        await taskDone.save()
+        
         res.status(201).json(taskDone)
     } catch (err) {
         res.status(500).json(err)
