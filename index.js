@@ -55,7 +55,6 @@ const transporter = nodemailer.createTransport({
 //let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
 
 function connectSchool(nameSchool) {
-    console.log(nameSchool)
     let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
     if (!newConection) {
         newConection = mongoose.createConnection(process.env.DATABASE_URL, {
@@ -67,7 +66,7 @@ function connectSchool(nameSchool) {
             tls: true, // Habilita TLS
             dbName: nameSchool
         })
-        console.log("NOVA CONXEXÃO CRIADA!")
+        console.log(`<🆕> Nova conexão criada: ${nameSchool}`)
     }
 
     return newConection
@@ -2488,9 +2487,10 @@ api.post("/tasksdone/add", async (req, res) => {
         await taskDone.save()
         
         res.status(201).json(taskDone)
+        console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
-        console.error(`[🛑] Erro ao executar: ${req.path}`)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
     } finally {
         console.log(`======================================`)
     }
@@ -2509,9 +2509,10 @@ api.post("/tasksdone/get", async (req, res) => {
         let finded = await modelTasksDone.find(valueSearch)
 
         res.json(finded)
+        console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
-        console.error(`[🛑] Erro ao executar: ${req.path}`)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
     } finally {
         console.log(`======================================`)
     }
