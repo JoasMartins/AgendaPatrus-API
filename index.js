@@ -946,7 +946,6 @@ api.get("/teachers", async (req, res) => {
 
 api.post("/teachers", async (req, res) => {
     let data = req.body
-    console.log(req.body)
 
     async function generateUniqueCode(length) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -1644,7 +1643,6 @@ api.post("/adm/login", async (req, res) => {
 
 api.post("/adm/token", async (req, res) => {
     const { token } = req?.body
-    console.log(token)
 
     let result = await modelTokens.findOne({ token })
     res.json(result)
@@ -1652,7 +1650,6 @@ api.post("/adm/token", async (req, res) => {
 
 api.post("/adm/token-register", async (req, res) => {
     const { school, token } = req?.body
-    console.log(school, token)
 
     new modelTokens({ school, token }).save()
         .then((resp) => {
@@ -1697,7 +1694,6 @@ api.get("/register/matter", async (req, res) => {
 
 api.post("/register/matter", async (req, res) => {
     let token = req.header("Authorization")
-    console.log(token)
 
     res.json(token)
 })
@@ -1741,20 +1737,17 @@ api.get("/search/students", async (req, res) => {
 //🆕
 api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
 
     let newConection = connectSchool(req.header("School"))
     let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = await modelStudents.find(valueSearch)
-    console.log(finded)
 
     res.json(finded)
 })
 
 api.post("/students/add", async (req, res) => {
     let student = req.body
-    console.log(student)
 
     let newConection = connectSchool(req.header("School"))
     let modelStudents = newConection.model("Student", schemaStudents)
@@ -1913,7 +1906,6 @@ api.post("/adm/actions/class-add", async (req, res) => {
 
 api.get("/adm/actions/class-students", async (req, res) => {
     let valueSearch = req.query?.class || ""
-    console.log(req.header("School"))
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -1931,7 +1923,6 @@ api.get("/adm/actions/class-students", async (req, res) => {
 
 api.get("/adm/actions/class-tasks", async (req, res) => {
     let valueSearch = req.query?.class || ""
-    console.log(req.header("School"))
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -1949,7 +1940,6 @@ api.get("/adm/actions/class-tasks", async (req, res) => {
 
 api.post("/adm/actions/class-reserved", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -2047,7 +2037,6 @@ api.put("/adm/actions/matter-edit", async (req, res) => {
 
 api.get("/adm/actions/matter-teachers", async (req, res) => {
     let valueSearch = req.query?.matterId || ""
-    console.log(req.header("School"))
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -2065,7 +2054,6 @@ api.get("/adm/actions/matter-teachers", async (req, res) => {
 
 api.get("/adm/actions/matter-tasks", async (req, res) => {
     let valueSearch = req.query?.matterId || ""
-    console.log(valueSearch)
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -2075,7 +2063,6 @@ api.get("/adm/actions/matter-tasks", async (req, res) => {
         let newModelTasks = newConection.model("Task", schemaTasks)
 
         let finded = await newModelTasks.find({ matterId: valueSearch })
-        console.log(finded)
         return res.json(finded || [])
     } catch (err) {
         return res.json(err)
@@ -2084,7 +2071,6 @@ api.get("/adm/actions/matter-tasks", async (req, res) => {
 
 api.post("/adm/actions/matter-reserved", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
     if (!req.header("School")) {
         return res.json("Header Null")
     }
@@ -2296,13 +2282,11 @@ api.post("/school", async (req, res) => {
 //🆕
 api.post("/teachers/get", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
 
     let newConection = connectSchool(req.header("School"))
     let modelTeachers = newConection.model("Teacher", schemaTeachers)
 
     let finded = await modelTeachers.find(valueSearch)
-    console.log(finded)
 
     res.json(finded)
 })
@@ -2313,13 +2297,11 @@ api.post("/teachers/get", async (req, res) => {
 //🆕
 api.post("/matters/get", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
 
     let newConection = connectSchool(req.header("School"))
     let modelMatters = newConection.model("Matter", schemaMatter)
 
     let finded = await modelMatters.find(valueSearch)
-    console.log(finded)
 
     res.json(finded)
 })
@@ -2359,8 +2341,6 @@ api.post("/tasks/add", async (req, res) => {
             authorId: taskData.authorId,
         }
 
-        console.log("===== CONSOLE - DATA TASK")
-        console.log(taskSend)
 
         let newConection = connectSchool(req.header("School"))
         let modelStudents = newConection.model("Student", schemaStudents)
@@ -2403,11 +2383,8 @@ api.post("/statustasks/set", async (req, res) => {
 //🆕
 api.post("/classes/get", async (req, res) => {
     let valueSearch = req.body
-    console.log(valueSearch)
 
     let connection = connectSchool(req.header("School"))
-    console.log("==== Conexão verify")
-    console.log(connection)
     let modelClasses = connection.model("Classe", schemaClass)
     let finded = await modelClasses.find(valueSearch)
 
@@ -2423,8 +2400,6 @@ api.post("/classes/get", async (req, res) => {
     //let modelClasses = newConection.model("Classe", schemaClass)
 
     //let finded = await modelClasses.find(valueSearch)
-    console.log("===== CLASSES - GET")
-    console.log(finded)
 
     res.json(finded)
 })
