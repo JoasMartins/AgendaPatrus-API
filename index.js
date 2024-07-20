@@ -12,7 +12,7 @@ const cors = require('cors');
 const { v4 } = require("uuid")
 require('dotenv').config()
 
-import schemaTasksDone from "./schemas/TasksDone"
+import schemaTasksDone from "./schemas/TasksDone.js"
 //const { schemaTasksDone } = require("./schemas/TasksDone")
 
 api.use(bodyParser.json());
