@@ -2481,7 +2481,6 @@ api.post("/tasksdone/add", async (req, res) => {
 
         let connection = connectSchool(req.header("School"))
         let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
-        console.log(modelTasksDone)
 
         let taskDone = new modelTasksDone(data)
         await taskDone.save()
@@ -2504,11 +2503,29 @@ api.post("/tasksdone/get", async (req, res) => {
     try {
         let connection = connectSchool(req.header("School"))
         let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
-        console.log("=== TaskDone")
-        console.log(modelTasksDone)
         let finded = await modelTasksDone.find(valueSearch)
 
         res.json(finded)
+        console.log(`======> [✅] Sucesso!`)
+    } catch (err) {
+        res.status(500).json(err)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
+    } finally {
+        console.log(`======================================`)
+    }
+})
+
+api.post("/tasksdone/delete", async (req, res) => {
+    console.log(`=============== ▶️ EXECUTANDO: ${req.path}`)
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    try {
+        let connection = connectSchool(req.header("School"))
+        let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
+        let taskDone = await modelTasksDone.findOneAndDelete(valueSearch)
+        
+        res.status(201).json(taskDone)
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
