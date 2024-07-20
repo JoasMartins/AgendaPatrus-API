@@ -1,6 +1,7 @@
 {
   "name": "agendapatrus-api",
   "version": "1.1.0",
+  "type": "module",
   "description": "API desenvolvida para gerenciar dados da aplicação React Native: AgendaPatrus",
   "main": "index.js",
   "dependencies": {

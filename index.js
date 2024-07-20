@@ -249,9 +249,10 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 setInterval(() => {
     let connections = mongoose.connections
+    console.log(`===== 📃 - Relatório =====`)
     console.log(`🔌 - Conexões:`)
     console.log(connections.map(connection => connection.name))
-}, 10000)
+}, 1000*60*5)
 
 api.listen(4000, async () => {
     console.log("🟢 | API ligada com sucesso!")
