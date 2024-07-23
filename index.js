@@ -2368,6 +2368,40 @@ api.post("/tasks/add", async (req, res) => {
     }
 })
 
+//🆕
+api.post("/tasks/edit", async (req, res) => {
+    let valueSearch = req.body
+
+    try {
+        let connection = connectSchool(req.header("School"))
+        let modelTasks = connection.model("Task", schemaTasks)
+
+        let result = await modelTasks.findOneAndUpdate({ _id: valueSearch?._id }, { $set: valueSearch })
+        return res.status(200).json(result)
+    } catch (error) {
+        console.error('Erro ao editar tarefa:', error);
+        return res.status(500).json({ error: 'Erro ao editar tarefa.' });
+    }
+
+})
+
+//🆕
+api.post("/tasks/delete", async (req, res) => {
+    let valueSearch = req.body
+
+    try {
+        let connection = connectSchool(req.header("School"))
+        let modelTasks = connection.model("Task", schemaTasks)
+
+        let result = await modelTasks.findOneAndDelete(valueSearch)
+        return res.status(200).json(result)
+    } catch (error) {
+        console.error('Erro ao deletar taref:', error);
+        res.status(500).json({ error: 'Erro ao deletar tarefa.' });
+    }
+
+})
+
 
 // --> Status de Tarefas
 api.post("/statustasks/get", async (req, res) => {
@@ -2518,4 +2552,10 @@ api.get("/status", async (req, res) => {
         status: 'API está funcionando',
         dbStatus: dbStatus
     });
+})
+
+api.post("/system/error", async (req, res) => {
+    let valueSearch = req.body
+    console.error(`=============== <📵📛> ERRO REPORTADO NO APLICATIVO!! ===============`)
+    console.error(valueSearch)
 })
