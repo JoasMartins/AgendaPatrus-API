@@ -1415,11 +1415,11 @@ api.post("/devices/put", async (req, res) => {
 
     let newConection = connectSchool(req.header("School"))
     let modelDevices = newConection.model("Device", schemaDevices)
-    console.log("=== deviceData ===")
-    console.log(deviceData)
+    //console.log("=== deviceData ===")
+    //console.log(deviceData)
 
-    console.log("=== user encontrado pra modificar ===")
-    console.log(await modelDevices.findOne({ userId: deviceData.userId }))
+    //console.log("=== user encontrado pra modificar ===")
+    //console.log(await modelDevices.findOne({ userId: deviceData.userId }))
 
     await modelDevices.findOneAndUpdate({ userId: deviceData.userId }, { $set: deviceData })
         .then((data) => { res.status(200).json(data) })
