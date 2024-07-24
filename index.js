@@ -254,7 +254,7 @@ setInterval(() => {
     console.log(`===== 📃 - Relatório =====`)
     console.log(`🔌 - Conexões:`)
     console.log(connections.map(connection => connection.name))
-}, 1000*60*5)
+}, 1000 * 60 * 5)
 
 api.listen(4000, async () => {
     console.log("🟢 | API ligada com sucesso!")
@@ -2416,26 +2416,23 @@ api.post("/statustasks/set", async (req, res) => {
 // --> Turmas
 //🆕
 api.post("/classes/get", async (req, res) => {
+    console.log(`=============== ▶️ EXECUTANDO: ${req.path}`)
     let valueSearch = req.body
+    console.log(valueSearch)
 
-    let connection = connectSchool(req.header("School"))
-    let modelClasses = connection.model("Classe", schemaClass)
-    let finded = await modelClasses.find(valueSearch)
+    try {
+        let connection = connectSchool(req.header("School"))
+        let modelClasses = connection.model("Classe", schemaClass)
+        let finded = await modelClasses.find(valueSearch)
 
-    /*
-    let finded = withNewConnection(req.header("School"), async (conn) => {
-        let modelClasses = conn.model("Classe", schemaClass)
-        return await modelClasses.find(valueSearch)
-    })
-    */
-
-
-    //let newConection= connectSchool(req.header("School"))
-    //let modelClasses = newConection.model("Classe", schemaClass)
-
-    //let finded = await modelClasses.find(valueSearch)
-
-    res.json(finded)
+        res.json(finded)
+        console.log(`======> [✅] Sucesso!`)
+    } catch (err) {
+        res.status(500).json(err)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
+    } finally {
+        console.log(`======================================`)
+    }
 })
 
 
@@ -2493,7 +2490,7 @@ api.post("/tasksdone/add", async (req, res) => {
 
         let taskDone = new modelTasksDone(data)
         await taskDone.save()
-        
+
         res.status(201).json(taskDone)
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
@@ -2533,7 +2530,7 @@ api.post("/tasksdone/delete", async (req, res) => {
         let connection = connectSchool(req.header("School"))
         let modelTasksDone = connection.model("TaskDone", schemaTasksDone)
         let taskDone = await modelTasksDone.findOneAndDelete(valueSearch)
-        
+
         res.status(200).json(taskDone)
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
