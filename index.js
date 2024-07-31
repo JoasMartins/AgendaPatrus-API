@@ -55,6 +55,7 @@ const transporter = nodemailer.createTransport({
 //let connectionSchool = connections.map(connection => connection.name == "EE-Testavel-Escolar")
 
 function connectSchool(nameSchool) {
+    console.log(`<------> Conexão requisitada: ${nameSchool}`)
     let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
     if (!newConection) {
         newConection = mongoose.createConnection(process.env.DATABASE_URL, {
