@@ -58,7 +58,7 @@ function connectSchool(nameSchool) {
     console.log(`<------> Conexão requisitada: ${nameSchool}`)
     let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
     if (!newConection) {
-        newConection = mongoose.createConnection("ixe", {//process.env.DATABASE_URL, {
+        newConection = mongoose.createConnection(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000, // Aumenta o tempo de espera para seleção do servidor
@@ -99,7 +99,7 @@ const options = {
     tls: true // Habilita TLS
 };
 
-mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
+mongoose.connect("/GLOBAL", options) /// process.env.DATABASE_URL + 
     .then((connection) => {
         const dbName = connection.connections[0].client.s.options.srvHost
         console.log(`🟢 | MongoDB conectada com sucesso!\n---> ${dbName}`)
