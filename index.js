@@ -99,7 +99,7 @@ const options = {
     tls: true // Habilita TLS
 };
 
-mongoose.connect("/GLOBAL", options) /// process.env.DATABASE_URL + 
+mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
     .then((connection) => {
         const dbName = connection.connections[0].client.s.options.srvHost
         console.log(`🟢 | MongoDB conectada com sucesso!\n---> ${dbName}`)
