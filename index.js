@@ -58,7 +58,7 @@ function connectSchool(nameSchool) {
     console.log(`<------> Conexão requisitada: ${nameSchool}`)
     let newConection = mongoose.connections.find(connection => connection.name == nameSchool)
     if (!newConection) {
-        newConection = mongoose.createConnection(process.env.DATABASE_URL, {
+        newConection = mongoose.createConnection("ixe", {//process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000, // Aumenta o tempo de espera para seleção do servidor
