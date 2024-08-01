@@ -2617,12 +2617,17 @@ api.post("/users/get", async (req, res) => {
         let connection = connectSchool(req.header("School"))
         let modelStudents = connection.model("Student", schemaUsers)
         let finded = await modelStudents.find(valueSearch)
-        resultFind.push(finded[0])
+        if(finded[0]) {
+            resultFind.push(finded[0])
+        }
 
         if (!resultFind[0]) {
             let modelTeachers = connection.model("Teacher", schemaUsers)
             let finded2 = await modelTeachers.find(valueSearch)
             resultFind.push(finded2)
+            if(finded2[0]) {
+                resultFind.push(finded2[0])
+            }
         }
 
         res.json(resultFind)
