@@ -1768,7 +1768,7 @@ api.get("/search/students", async (req, res) => {
     let filter = req.query?.filter || ""
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaUser)
+    let modelStudents = newConection.model("Student", schemaStudents)
 
     let finded = []
 
@@ -1802,7 +1802,7 @@ api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaUser)
+    let modelStudents = newConection.model("Student", schemaUsers)
 
     let finded = await modelStudents.find(valueSearch)
 
@@ -1813,7 +1813,7 @@ api.post("/students/add", async (req, res) => {
     let student = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaUser)
+    let modelStudents = newConection.model("Student", schemaUsers)
 
     new modelStudents(student).save()
         .then((resp) => {
@@ -2347,7 +2347,7 @@ api.post("/teachers/get", async (req, res) => {
     let valueSearch = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelTeachers = newConection.model("Teacher", schemaUser)
+    let modelTeachers = newConection.model("Teacher", schemaUsers)
 
     let finded = await modelTeachers.find(valueSearch)
 
