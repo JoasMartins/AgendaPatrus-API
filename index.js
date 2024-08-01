@@ -290,7 +290,7 @@ var schemaLogAlerts = new mongoose.Schema({
     },
 })
 
-var schemaUsers = new mongoose.Schema({
+var schemaUsersANTIGO = new mongoose.Schema({
     fullname: String,
     email: String,
     password: {
@@ -414,11 +414,11 @@ let schemaSchools = new mongoose.Schema({
 })
 
 // NOVOS DADOS
-const schemaUser = new mongoose.Schema({
-    fullname: string,
-    password: string,
-    email: string,
-    createdAt: number,
+const schemaUsers = new mongoose.Schema({
+    fullname: String,
+    password: String,
+    email: String,
+    createdAt: Number,
     isTeacher: {
         type: Boolean,
         default: false
@@ -431,7 +431,7 @@ const schemaUser = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    roleId: string,
+    roleId: String,
     settings: {
         pushTasksCreated: {
             type: Boolean,
@@ -740,7 +740,7 @@ async function increment(next) {
 
 schemaTasks.pre('save', increment)
 schemaLogAlerts.pre('save', increment)
-schemaUsers.pre('save', increment)
+schemaUsersANTIGO.pre('save', increment)
 schemaMarkedTasks.pre('save', increment);
 schemaDevices.pre('save', increment)
 schemaAppinfos.pre('save', increment)
@@ -756,7 +756,7 @@ schemaStatusTasks.pre('save', increment)
 const modelTask = mongoose.model("Task", schemaTasks)
 const modelLogAlerts = mongoose.model("LogAlert", schemaLogAlerts)
 const modelMarkedTasks = mongoose.model('MarkedTask', schemaMarkedTasks);
-const modelUsers = mongoose.model("User", schemaUsers)
+const modelUsers = mongoose.model("User", schemaUsersANTIGO)
 const modelDevices = mongoose.model("Device", schemaDevices)
 const modelAppinfos = mongoose.model("Appinfo", schemaAppinfos)
 
@@ -2595,6 +2595,37 @@ api.post("/tasksdone/delete", async (req, res) => {
         let taskDone = await modelTasksDone.findOneAndDelete(valueSearch)
 
         res.status(200).json(taskDone)
+        console.log(`======> [✅] Sucesso!`)
+    } catch (err) {
+        res.status(500).json(err)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
+    } finally {
+        console.log(`======================================`)
+    }
+})
+
+
+api.post("/users/get", async (req, res) => {
+    console.log(`=============== ▶️ EXECUTANDO: ${req.path}`)
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    try {
+
+        let resultFind = []
+
+        let connection = connectSchool(req.header("School"))
+        let modelStudents = connection.model("Student", schemaUsers)
+        let finded = await modelStudents.find(valueSearch)
+        resultFind.push(finded[0])
+
+        if (!resultFind[0]) {
+            let modelTeachers = connection.model("Teacher", schemaUsers)
+            let finded2 = await modelTeachers.find(valueSearch)
+            resultFind.push(finded2)
+        }
+
+        res.json(resultFind)
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
