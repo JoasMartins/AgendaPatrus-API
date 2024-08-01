@@ -2624,7 +2624,7 @@ api.post("/users/get", async (req, res) => {
         if (!resultFind[0]) {
             let modelTeachers = connection.model("Teacher", schemaUsers)
             let finded2 = await modelTeachers.find(valueSearch)
-            resultFind.push(finded2)
+            resultFind.push(finded2[0])
             if(finded2[0]) {
                 resultFind.push(finded2[0])
             }
