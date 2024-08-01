@@ -414,6 +414,67 @@ let schemaSchools = new mongoose.Schema({
 })
 
 // NOVOS DADOS
+const schemaUser = new mongoose.Schema({
+    fullname: string,
+    password: string,
+    email: string,
+    createdAt: number,
+    isTeacher: {
+        type: Boolean,
+        default: false
+    },
+    isRepresentative: {
+        type: Boolean,
+        default: false
+    },
+    isPunished: {
+        type: Boolean,
+        default: false
+    },
+    roleId: string,
+    settings: {
+        pushTasksCreated: {
+            type: Boolean,
+            default: false
+        },
+        pushTasksToday: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks1Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks2Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks3Days: {
+            type: Boolean,
+            default: true
+        },
+        pushTasks4Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks5Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks6Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks7Days: {
+            type: Boolean,
+            default: false
+        },
+        pushTasks10Days: {
+            type: Boolean,
+            default: false
+        },
+    },
+})
 const schemaStudents = new mongoose.Schema({
     fullname: String,
     email: String,
@@ -485,6 +546,7 @@ const schemaStudents = new mongoose.Schema({
         }
     }
 })
+
 let NEW_USER_student = {
     "fullname": "João da Silva Santos",
     "email": "joaosilvasanto2006@gmail.com",
@@ -1706,7 +1768,7 @@ api.get("/search/students", async (req, res) => {
     let filter = req.query?.filter || ""
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaStudents)
+    let modelStudents = newConection.model("Student", schemaUser)
 
     let finded = []
 
@@ -1740,7 +1802,7 @@ api.post("/students/get", async (req, res) => {
     let valueSearch = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaStudents)
+    let modelStudents = newConection.model("Student", schemaUser)
 
     let finded = await modelStudents.find(valueSearch)
 
@@ -1751,7 +1813,7 @@ api.post("/students/add", async (req, res) => {
     let student = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelStudents = newConection.model("Student", schemaStudents)
+    let modelStudents = newConection.model("Student", schemaUser)
 
     new modelStudents(student).save()
         .then((resp) => {
@@ -2285,7 +2347,7 @@ api.post("/teachers/get", async (req, res) => {
     let valueSearch = req.body
 
     let newConection = connectSchool(req.header("School"))
-    let modelTeachers = newConection.model("Teacher", schemaTeachers)
+    let modelTeachers = newConection.model("Teacher", schemaUser)
 
     let finded = await modelTeachers.find(valueSearch)
 
