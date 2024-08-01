@@ -2640,6 +2640,52 @@ api.post("/users/get", async (req, res) => {
     }
 })
 
+api.post("/users/edit", async (req, res) => {
+    console.log(`=============== ▶️ EXECUTANDO: ${req.path}`)
+    let valueSearch = req.body
+    console.log(valueSearch)
+
+    try {
+
+        let resultFind = []
+
+        let connection = connectSchool(req.header("School"))
+        let modelStudents = connection.model("Student", schemaUsers)
+        let finded = await modelStudents.find({ _id: valueSearch?._id })
+        if(finded[0]) {
+            resultFind.push(finded[0])
+        }
+
+        if (!resultFind[0]) {
+            let modelTeachers = connection.model("Teacher", schemaUsers)
+            let finded2 = await modelTeachers.find({ _id: valueSearch?._id })
+            resultFind.push(finded2[0])
+            if(finded2[0]) {
+                resultFind.push(finded2[0])
+            }
+        }
+
+        
+        let userToEdit = resultFind[0]
+        if(!userToEdit) {
+            res.json(resultFind)
+            console.log(`======> [✅] Sucesso!`)
+            return
+        }
+
+        let model = userToEdit?.isTeacher ? connection.model("Teacher", schemaUsers) : connection.model("Student", schemaUsers)
+        let newUser = await model.findOneAndUpdate({ _id: userToEdit?._id }, { $set: valueSearch })
+
+        res.json(newUser)
+        console.log(`======> [✅] Sucesso!`)
+    } catch (err) {
+        res.status(500).json(err)
+        console.error(`======> [🛑] Erro ao executar: ${req.path}`)
+    } finally {
+        console.log(`======================================`)
+    }
+})
+
 api.get("/status", async (req, res) => {
     console.log("STATUS foi chamado")
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
