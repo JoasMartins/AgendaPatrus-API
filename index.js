@@ -2617,7 +2617,7 @@ api.post("/users/get", async (req, res) => {
         let connection = connectSchool(req.header("School"))
         let modelStudents = connection.model("Student", schemaUsers)
         let finded = await modelStudents.find(valueSearch)
-        if(finded[0]) {
+        if (finded[0]) {
             resultFind.push(finded[0])
         }
 
@@ -2625,7 +2625,7 @@ api.post("/users/get", async (req, res) => {
             let modelTeachers = connection.model("Teacher", schemaUsers)
             let finded2 = await modelTeachers.find(valueSearch)
             resultFind.push(finded2[0])
-            if(finded2[0]) {
+            if (finded2[0]) {
                 resultFind.push(finded2[0])
             }
         }
@@ -2649,31 +2649,34 @@ api.post("/users/edit", async (req, res) => {
 
         let resultFind = []
 
-        let connection = connectSchool(req.header("School"))
-        let modelStudents = connection.model("Student", schemaUsers)
-        let finded = await modelStudents.find({ _id: valueSearch?._id })
-        if(finded[0]) {
-            resultFind.push(finded[0])
-        }
+        const connection = connectSchool(req.header("School"));
+        const modelStudents = connection.model("Student", schemaUsers);
+        const modelTeachers = connection.model("Teacher", schemaUsers);
 
-        if (!resultFind[0]) {
-            let modelTeachers = connection.model("Teacher", schemaUsers)
-            let finded2 = await modelTeachers.find({ _id: valueSearch?._id })
-            resultFind.push(finded2[0])
-            if(finded2[0]) {
-                resultFind.push(finded2[0])
+        let userToEdit = null;
+
+        // Busca na coleção de alunos primeiro
+        let finded = await modelStudents.findOne({ _id: valueSearch?._id });
+        if (finded) {
+            userToEdit = finded;
+        } else {
+            // Se não encontrar na coleção de alunos, busca na coleção de professores
+            finded = await modelTeachers.findOne({ _id: valueSearch?._id });
+            if (finded) {
+                userToEdit = finded;
             }
         }
 
-        
-        let userToEdit = resultFind[0]
-        if(!userToEdit) {
+        if (!userToEdit) {
             res.json(resultFind)
-            console.log(`======> [✅] Sucesso!`)
+            console.log(`======> [✅] Sucesso! Nenhum user editado`)
             return
         }
 
-        let model = userToEdit?.isTeacher ? connection.model("Teacher", schemaUsers) : connection.model("Student", schemaUsers)
+        console.log("User a EDITAR =====")
+        console.log(userToEdit)
+
+        let model = userToEdit?.isTeacher ? modelTeachers : modelStudents
         let newUser = await model.findOneAndUpdate({ _id: userToEdit?._id }, { $set: valueSearch })
 
         res.json(newUser)
