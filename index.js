@@ -2615,27 +2615,21 @@ api.post("/users/get", async (req, res) => {
         const modelStudents = connection.model("Student", schemaUsers);
         const modelTeachers = connection.model("Teacher", schemaUsers);
 
-        let userToEdit = null;
+        let resultFind = [];
 
         // Busca na coleção de alunos primeiro
-        let finded = await modelStudents.findOne({ _id: valueSearch?._id });
-        if (finded) {
-            userToEdit = finded;
+        let findedStudents = await modelStudents.find(valueSearch);
+        if (findedStudents.length > 0) {
+            resultFind = findedStudents;
         } else {
             // Se não encontrar na coleção de alunos, busca na coleção de professores
-            finded = await modelTeachers.findOne({ _id: valueSearch?._id });
-            if (finded) {
-                userToEdit = finded;
+            let findedTeachers = await modelTeachers.find(valueSearch);
+            if (findedTeachers.length > 0) {
+                resultFind = findedTeachers;
             }
         }
 
-        if (!userToEdit) {
-            res.json([userToEdit])
-            console.log(`======> [✅] Sucesso! Nenhum user editado`)
-            return
-        }
-
-        res.json([userToEdit])
+        res.json(resultFind);
         console.log(`======> [✅] Sucesso!`)
     } catch (err) {
         res.status(500).json(err)
