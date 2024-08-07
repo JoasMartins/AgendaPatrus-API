@@ -136,7 +136,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let profilesTeachers = await schoolModelTeachers.find({ "settings.pushTasksToday": true })
                     profiles = profilesStudents.concat(profilesTeachers)
                 }
-                if (diasRestantesSelecionado > 0) {                
+                if (diasRestantesSelecionado > 0) {
                     let profilesStudents = await schoolModelStudents.find({ [settingsFind]: true })
                     let profilesTeachers = await schoolModelTeachers.find({ [settingsFind]: true })
                     profiles = profilesStudents.concat(profilesTeachers)
@@ -145,7 +145,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 console.log("💫 USERS a NOTIFICAR:")
                 console.log(profiles)
 
-                
+
 
                 let tasksAll = await schoolModelTasks.find({ date: { $gt: Date.now() - 1000 * 60 } })
                 let listTasksDiasRest = tasksAll.map((task) => {
@@ -167,10 +167,13 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 console.log(tasks)
 
                 profiles.map(async (profile) => {
-                    if(profile?.isTeacher == true) {
+                    console.log("💫 Usuario:")
+                    console.log(profile.roleId)
+                    if (profile?.isTeacher == true) {
                         var tasksTurma = tasks.filter(task => task.matterId == profile.roleId)
                     } else {
                         console.log("💫 VERIFICAÇÃO DE VALORES:")
+                        console.log(profile)
                         console.log(`${tasks[0]?.classeId} ======= ${profile.roleId}`)
                         var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
@@ -178,9 +181,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     console.log("💫 Tarefas da TURMA:")
                     console.log(tasksTurma)
 
-                    console.log("💫 Usuario:")
-                    console.log(profile)
-                    
+
+
                     let device = await modelDevices.findOne({ email: profile.email })
                     let playerId = device?.userId
 
@@ -202,7 +204,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                             if (item.type == "Outro") icon = "⚪ "
 
                             let role = ""
-                            if(profile.isTeacher == true) {
+                            if (profile.isTeacher == true) {
                                 let roleData = schoolModelClasses.findOne({ _id: item.classeId })
                                 role = roleData?.title
                             } else {
