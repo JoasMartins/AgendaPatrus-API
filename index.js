@@ -168,9 +168,11 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                 profiles.map(async (profile) => {
                     if(profile?.isTeacher == true) {
-                        var tasksTurma = tasks.filter(task => task.matterId === profile.roleId)
+                        var tasksTurma = tasks.filter(task => task.matterId == profile.roleId)
                     } else {
-                        var tasksTurma = tasks.filter(task => task.classeId === profile.roleId)
+                        console.log("💫 VERIFICAÇÃO DE VALORES:")
+                        console.log(profile)
+                        var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
 
                     console.log("💫 Tarefas da TURMA:")
