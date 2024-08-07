@@ -145,7 +145,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                 return
 
-                let tasksAll = await schoolModelTasks.find({ date: { $gt: Date.now() } })
+                let tasksAll = await schoolModelTasks.find({ date: { $gt: Date.now() - 1000 * 60 } })
                 let listTasksDiasRest = tasksAll.map((task) => {
                     let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
                     return { ...task, diasRest: diasCalculados }
@@ -244,7 +244,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             let minutos = dateNow.getMinutes()
             console.log(`HORAS: ${horas}:${minutos} >================================================`)
 
-            sendNotification(13)
+            sendNotification(8)
 
             if (horas === 4) sendNotification(0) // 04h
 
