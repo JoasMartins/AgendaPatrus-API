@@ -114,6 +114,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 let schoolModelStudents = connection.model("Student", schemaStudents)
                 let schoolModelTeachers = connection.model("Teacher", schemaTeachers)
                 let schoolModelTasks = connection.model("Task", schemaTasks)
+                let schoolModelMatters = connection.model("Task", schemaMatter)
+                let schoolModelClasses = connection.model("Task", schemaClass)
 
                 const milliseconds = Date.now()
                 const days = milliseconds / (24 * 60 * 60 * 1000)
@@ -161,12 +163,18 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                 let tasks = tasksComDoc.map(task => task._doc)
 
+                console.log("💫 Tarefas:")
+                console.log(tasks)
+
                 profiles.map(async (profile) => {
                     if(profile?.isTeacher == true) {
                         var tasksTurma = tasks.filter(task => task.matterId === profile.roleId)
                     } else {
                         var tasksTurma = tasks.filter(task => task.classeId === profile.roleId)
                     }
+
+                    console.log("💫 Tarefas da TURMA:")
+                    console.log(tasksTurma)
                     
                     let device = await modelDevices.findOne({ email: profile.email })
                     let playerId = device?.userId
@@ -190,10 +198,14 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                             let role = ""
                             if(profile.isTeacher == true) {
-
+                                let roleData = schoolModelClasses.findOne({ _id: item.classeId })
+                                role = roleData?.title
+                            } else {
+                                let roleData = schoolModelMatters.findOne({ _id: item.matterId })
+                                role = roleData?.title
                             }
 
-                            text = text + `${score}. ${icon}  ${item.title};`
+                            text = text + `${score}. ${icon} ${role} | ${item.title};`
                             if (index < tasksTurma.length - 1) {
                                 text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
                             }
