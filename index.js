@@ -167,10 +167,11 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 console.log(tasks)
 
                 profiles.map(async (profile) => {
+                    var tasksTurma = []
                     if(profile?.isTeacher == true) {
-                        var tasksTurma = tasks.filter(task => task.matterId === profile.roleId)
+                        tasksTurma = tasks.filter(task => task.matterId === profile.roleId)
                     } else {
-                        var tasksTurma = tasks.filter(task => task.classeId === profile.roleId)
+                        tasksTurma = tasks.filter(task => task.classeId === profile.roleId)
                     }
 
                     console.log("💫 Tarefas da TURMA:")
