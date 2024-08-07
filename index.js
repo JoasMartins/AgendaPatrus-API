@@ -163,7 +163,12 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 let tasks = tasksComDoc.map(task => task._doc)
 
                 profiles.map(async (profile) => {
-                    let tasksTurma = tasks.filter(task => task._id === profile.roleId)
+                    if(profile?.isTeacher == true) {
+                        var tasksTurma = tasks.filter(task => task.matterId === profile.roleId)
+                    } else {
+                        var tasksTurma = tasks.filter(task => task.classeId === profile.roleId)
+                    }
+                    
                     let device = await modelDevices.findOne({ email: profile.email })
                     let playerId = device?.userId
 
@@ -183,7 +188,13 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                             if (item.type == "Trabalho") icon = "🟡 "
                             if (item.type == "Prova") icon = "🔴 "
                             if (item.type == "Outro") icon = "⚪ "
-                            text = text + `${score}. ${icon}${item.title};`
+
+                            let role = ""
+                            if(profile.isTeacher == true) {
+
+                            }
+
+                            text = text + `${score}. ${icon}  ${item.title};`
                             if (index < tasksTurma.length - 1) {
                                 text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
                             }
@@ -233,6 +244,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             })
         }
 
+        sendNotification(5)
+
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
 
         /*
@@ -245,7 +258,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             let minutos = dateNow.getMinutes()
             console.log(`HORAS: ${horas}:${minutos} >================================================`)
 
-            sendNotification(8)
+            sendNotification(5)
 
             if (horas === 4) sendNotification(0) // 04h
 
