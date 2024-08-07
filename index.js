@@ -256,7 +256,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             if (horas === 18) sendNotification(6) // 18h
             if (horas === 19) sendNotification(7) // 19h
             if (horas === 20) sendNotification(10)// 20h
-        }, 1000 * 10)
+        }, 1000 * 60 * 2)
     })
     .catch((err) => {
         console.log(err)
