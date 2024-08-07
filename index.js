@@ -163,12 +163,12 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 let tasks = tasksComDoc.map(task => task._doc)
 
                 profiles.map(async (profile) => {
-                    let tasksTurma = tasks.filter(task => task.turma === profile.turma)
+                    let tasksTurma = tasks.filter(task => task._id === profile.roleId)
                     let device = await modelDevices.findOne({ email: profile.email })
                     let playerId = device?.userId
 
 
-                    if (!tasksTurma[0]) return console.log(`[📵] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
+                    if (!tasksTurma[0]) return console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
 
                     let text = ""
                     let score = 0
@@ -213,8 +213,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     }
 
                     axios.post('https://onesignal.com/api/v1/notifications', data, { headers })
-                        .then((respon) => console.log(`[🔔✅] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
-                        .catch((error) => console.error(`[🔔❌] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Erro ao enviar a notificação!`, error.message))
+                        .then((respon) => console.log(`[🔔✅] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
+                        .catch((error) => console.error(`[🔔❌] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Erro ao enviar a notificação!`, error.message))
 
                     const milliseconds = Date.now()
                     const days = milliseconds / (24 * 60 * 60 * 1000)
@@ -235,6 +235,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
 
+        /*
         console.log(`🟢 | Sistema de Notificações iniciado com sucesso!`)
         setInterval(async () => {
             let formattedDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
@@ -257,6 +258,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             if (horas === 19) sendNotification(7) // 19h
             if (horas === 20) sendNotification(10)// 20h
         }, 1000 * 60 * 2)
+        */
     })
     .catch((err) => {
         console.log(err)
