@@ -145,7 +145,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                 return
 
-                let tasksAll = await modelTask.find()
+                let tasksAll = await schoolModelTasks.find({ date: { $gt: Date.now() } })
                 let listTasksDiasRest = tasksAll.map((task) => {
                     let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
                     return { ...task, diasRest: diasCalculados }
