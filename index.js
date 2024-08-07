@@ -2406,24 +2406,12 @@ api.post("/tasks/add", async (req, res) => {
 
 
         let newConection = connectSchool(req.header("School"))
-        let modelStudents = newConection.model("Student", schemaStudents)
         let modelTasks = newConection.model("Task", schemaTasks)
-        let modelStatusTasks = newConection.model("StatusTask", schemaStatusTasks)
 
         //await modelStudents.updateMany({ turma: taskData.turma }, { $inc: { tasksAtribuidas: taskData.score || +1 } })
         let task = new modelTasks(taskSend)
         await task.save()
 
-        let students = await modelStudents.find({ classe: taskData?.roleData?.classe })
-        const studentTasksPromises = students.map(student => {
-            const studentTask = new modelStatusTasks({
-                userId: student._id,
-                classeId: task._id
-            })
-            return studentTask.save()
-        })
-
-        await Promise.all(studentTasksPromises)
         res.status(201).json(task)
     } catch (error) {
         console.error('Erro ao criar tarefa:', error);
