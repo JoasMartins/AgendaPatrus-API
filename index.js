@@ -108,8 +108,12 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
         const sendNotification = async (diasRestantesSelecionado) => {
             let schools = await modelSchools.find()
             schools.map(async (school) => {
-                let schoolModelStudents = mongoose.model("Student", schemaStudents)
-                let schoolModelTeachers = mongoose.model("Teacher", schemaTeachers)
+                console.log("💫 Escola:")
+                console.log(school?.school)
+                const connection = connectSchool(school?.school);
+                let schoolModelStudents = connection.model("Student", schemaStudents)
+                let schoolModelTeachers = connection.model("Teacher", schemaTeachers)
+                let schoolModelTasks = connection.model("Task", schemaTasks)
 
                 const milliseconds = Date.now()
                 const days = milliseconds / (24 * 60 * 60 * 1000)
@@ -136,7 +140,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     profiles = profilesStudents.concat(profilesTeachers)
                 }
 
-                console.log("==== USERS a NOTIFICAR")
+                console.log("💫 USERS a NOTIFICAR:")
                 console.log(profiles)
 
                 return
