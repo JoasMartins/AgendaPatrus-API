@@ -106,148 +106,157 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 
         const sendNotification = async (diasRestantesSelecionado) => {
-            const milliseconds = Date.now()
-            const days = milliseconds / (24 * 60 * 60 * 1000)
-            let day = Math.floor(days)
-
-            let dbName = "pushTasksToday"
-            if (diasRestantesSelecionado > 0) dbName = `pushTasks${diasRestantesSelecionado}Days`
-
-            let pastAlertVerify = await modelLogAlerts.findOne({ name: dbName })
-            if (pastAlertVerify?.value === day) return
-
-            let settingsFind = `settings.pushTasks${diasRestantesSelecionado}Days`
-            let profiles = []
-            if (diasRestantesSelecionado == 0) profiles = await modelUsers.find({ "settings.pushTasksToday": true })
-            if (diasRestantesSelecionado > 0) profiles = await modelUsers.find({ [settingsFind]: true })
-
-            let tasksAll = await modelTask.find()
-            let listTasksDiasRest = tasksAll.map((task) => {
-                let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
-                return { ...task, diasRest: diasCalculados }
-            });
-
-
-
-            let tasksComDoc = []
-            if (diasRestantesSelecionado == 0) {
-                tasksComDoc = listTasksDiasRest.filter(task => task.diasRest == 0 || task.diasRest == -0)
-            } else {
-                tasksComDoc = listTasksDiasRest.filter(task => task.diasRest == diasRestantesSelecionado)
-            }
-
-            let tasks = tasksComDoc.map(task => task._doc)
-
-            profiles.map(async (profile) => {
-                let tasksTurma = tasks.filter(task => task.turma === profile.turma)
-                let device = await modelDevices.findOne({ email: profile.email })
-                let playerId = device?.userId
-
-
-                if (!tasksTurma[0]) return console.log(`[📵] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
-
-                let text = ""
-                let score = 0
-                let tasksCount = 0
-
-                tasksTurma.map((item, index) => {
-                    score++
-                    tasksCount++
-                    if (score < 4) {
-                        let icon = ""
-                        if (item.type == "Atividade") icon = "🔵 "
-                        if (item.type == "Trabalho") icon = "🟡 "
-                        if (item.type == "Prova") icon = "🔴 "
-                        if (item.type == "Outro") icon = "⚪ "
-                        text = text + `${score}. ${icon}${item.title};`
-                        if (index < tasksTurma.length - 1) {
-                            text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
-                        }
-                    }
-                })
-
-                if (tasksCount > 3) {
-                    let newCount = tasksCount - 3
-                    text = text + `E ${newCount > 1 ? "outras" : "outra"} ${newCount} ${newCount > 1 ? "tarefas" : "tarefa"}...`
-                }
-
-                let headText = "⏰ Tarefas para hoje"
-                if (diasRestantesSelecionado != 0) {
-                    headText = `🗓️ Tarefas para daqui ${diasRestantesSelecionado} ${diasRestantesSelecionado <= 1 ? "dia" : "dias"}`
-                }
-
-                const headers = {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Authorization': `Basic ${appData.onesginal.authorization}`,
-                };
-
-                const data = {
-                    app_id: appData.onesginal.appId,
-                    include_player_ids: [playerId],
-                    headings: { "en": headText },
-                    contents: { "en": text },
-                }
-
-                axios.post('https://onesignal.com/api/v1/notifications', data, { headers })
-                    .then((respon) => console.log(`[🔔✅] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
-                    .catch((error) => console.error(`[🔔❌] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Erro ao enviar a notificação!`, error.message))
+            let schools = await modelSchools.find()
+            schools.map(async (school) => {
+                let schoolModelStudents = mongoose.model("Student", schemaStudents)
+                let schoolModelTeachers = mongoose.model("Teacher", schemaTeachers)
 
                 const milliseconds = Date.now()
                 const days = milliseconds / (24 * 60 * 60 * 1000)
                 let day = Math.floor(days)
 
-                if (pastAlertVerify) {
-                    await modelLogAlerts.findOneAndUpdate({ name: dbName }, { $set: { value: day } })
-                } else {
-                    new modelLogAlerts({
-                        name: dbName,
-                        type: "perDay",
-                        value: day
-                    }).save()
-                }
-            })
+                let dbName = "pushTasksToday"
+                if (diasRestantesSelecionado > 0) dbName = `pushTasks${diasRestantesSelecionado}Days`
 
+                let pastAlertVerify = await modelLogAlerts.findOne({ name: dbName })
+                if (pastAlertVerify?.value === day) return
+
+
+
+                let settingsFind = `settings.pushTasks${diasRestantesSelecionado}Days`
+                let profiles = []
+                if (diasRestantesSelecionado == 0) {
+                    let profilesStudents = await schoolModelStudents.find({ "settings.pushTasksToday": true })
+                    let profilesTeachers = await schoolModelTeachers.find({ "settings.pushTasksToday": true })
+                    profiles = profilesStudents.concat(profilesTeachers)
+                }
+                if (diasRestantesSelecionado > 0) {                
+                    let profilesStudents = await schoolModelStudents.find({ [settingsFind]: true })
+                    let profilesTeachers = await schoolModelTeachers.find({ [settingsFind]: true })
+                    profiles = profilesStudents.concat(profilesTeachers)
+                }
+
+                console.log("==== USERS a NOTIFICAR")
+                console.log(profiles)
+
+                return
+
+                let tasksAll = await modelTask.find()
+                let listTasksDiasRest = tasksAll.map((task) => {
+                    let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
+                    return { ...task, diasRest: diasCalculados }
+                });
+
+
+
+                let tasksComDoc = []
+                if (diasRestantesSelecionado == 0) {
+                    tasksComDoc = listTasksDiasRest.filter(task => task.diasRest == 0 || task.diasRest == -0)
+                } else {
+                    tasksComDoc = listTasksDiasRest.filter(task => task.diasRest == diasRestantesSelecionado)
+                }
+
+                let tasks = tasksComDoc.map(task => task._doc)
+
+                profiles.map(async (profile) => {
+                    let tasksTurma = tasks.filter(task => task.turma === profile.turma)
+                    let device = await modelDevices.findOne({ email: profile.email })
+                    let playerId = device?.userId
+
+
+                    if (!tasksTurma[0]) return console.log(`[📵] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
+
+                    let text = ""
+                    let score = 0
+                    let tasksCount = 0
+
+                    tasksTurma.map((item, index) => {
+                        score++
+                        tasksCount++
+                        if (score < 4) {
+                            let icon = ""
+                            if (item.type == "Atividade") icon = "🔵 "
+                            if (item.type == "Trabalho") icon = "🟡 "
+                            if (item.type == "Prova") icon = "🔴 "
+                            if (item.type == "Outro") icon = "⚪ "
+                            text = text + `${score}. ${icon}${item.title};`
+                            if (index < tasksTurma.length - 1) {
+                                text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
+                            }
+                        }
+                    })
+
+                    if (tasksCount > 3) {
+                        let newCount = tasksCount - 3
+                        text = text + `E ${newCount > 1 ? "outras" : "outra"} ${newCount} ${newCount > 1 ? "tarefas" : "tarefa"}...`
+                    }
+
+                    let headText = "⏰ Tarefas para hoje"
+                    if (diasRestantesSelecionado != 0) {
+                        headText = `🗓️ Tarefas para daqui ${diasRestantesSelecionado} ${diasRestantesSelecionado <= 1 ? "dia" : "dias"}`
+                    }
+
+                    const headers = {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Authorization': `Basic ${appData.onesginal.authorization}`,
+                    };
+
+                    const data = {
+                        app_id: appData.onesginal.appId,
+                        include_player_ids: [playerId],
+                        headings: { "en": headText },
+                        contents: { "en": text },
+                    }
+
+                    axios.post('https://onesignal.com/api/v1/notifications', data, { headers })
+                        .then((respon) => console.log(`[🔔✅] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
+                        .catch((error) => console.error(`[🔔❌] ${profile.turma} | Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Erro ao enviar a notificação!`, error.message))
+
+                    const milliseconds = Date.now()
+                    const days = milliseconds / (24 * 60 * 60 * 1000)
+                    let day = Math.floor(days)
+
+                    if (pastAlertVerify) {
+                        await modelLogAlerts.findOneAndUpdate({ name: dbName }, { $set: { value: day } })
+                    } else {
+                        new modelLogAlerts({
+                            name: dbName,
+                            type: "perDay",
+                            value: day
+                        }).save()
+                    }
+                })
+            })
         }
 
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
-        /*
+
+        console.log(`🟢 | Sistema de Notificações iniciado com sucesso!`)
         setInterval(async () => {
-            axios.get(appData.api.url + "/")
-                .then(() => {
-                    let formattedDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
-                    let dateNow = new Date(formattedDate)
-                    //dateNow.setHours(4)
-                    let horas = dateNow.getHours()
-                    let minutos = dateNow.getMinutes()
-                    console.log(`HORAS: ${horas}:${minutos} >================================================`)
+            let formattedDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
+            let dateNow = new Date(formattedDate)
+            //dateNow.setHours(4)
+            let horas = dateNow.getHours()
+            let minutos = dateNow.getMinutes()
+            console.log(`HORAS: ${horas}:${minutos} >================================================`)
 
-                    //sendNotification(0)
+            //sendNotification(0)
 
-                    if (horas === 4) sendNotification(0) // 04h
+            if (horas === 4) sendNotification(0) // 04h
 
-                    if (horas === 13) sendNotification(1) // 13h
-                    if (horas === 14) sendNotification(2) // 14h
-                    if (horas === 15) sendNotification(3) // 15h
-                    if (horas === 16) sendNotification(4) // 16h
-                    if (horas === 17) sendNotification(5) // 17h
-                    if (horas === 18) sendNotification(6) // 18h
-                    if (horas === 19) sendNotification(7) // 19h
-                    if (horas === 20) sendNotification(10)// 20h
-                })
-                .catch((err) => {
-                    console.log("Ocorreu um erro ao chamar RESET! Nada foi feito.")
-                    console.log(err)
-                })
-        }, 1000 * 60 * 2)
-        */
-
-        //  FAZER: Nas notificações da restando mais de 0 dias, as tarefas que o user ja marcou
-        //      como feito não será incluso em "text"
+            if (horas === 13) sendNotification(1) // 13h
+            if (horas === 14) sendNotification(2) // 14h
+            if (horas === 15) sendNotification(3) // 15h
+            if (horas === 16) sendNotification(4) // 16h
+            if (horas === 17) sendNotification(5) // 17h
+            if (horas === 18) sendNotification(6) // 18h
+            if (horas === 19) sendNotification(7) // 19h
+            if (horas === 20) sendNotification(10)// 20h
+        }, 1000 * 10)
     })
     .catch((err) => {
         console.log(err)
         console.log("❌ | MongoDB não foi conectado!")
-        //console.log("❌ | API não foi ligada devido a não conexão com banco de dados!")
     })
 
 setInterval(() => {
