@@ -171,7 +171,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                         var tasksTurma = tasks.filter(task => task.matterId == profile.roleId)
                     } else {
                         console.log("💫 VERIFICAÇÃO DE VALORES:")
-                        console.log(profile)
+                        console.log(`${tasks[0]?.classeId} ======= ${profile.roleId}`)
                         var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
 
