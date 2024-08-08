@@ -188,7 +188,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 
                     let device = await schoolModelDevices.findOne({ userId: profile._id })
-                    let playerId = device?.userId
+                    let playerId = device?.deviceId
 
 
                     if (!tasksTurma[0]) return console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
@@ -197,7 +197,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let score = 0
                     let tasksCount = 0
 
-                    tasksTurma.map((item, index) => {
+                    tasksTurma.map(async (item, index) => {
                         score++
                         tasksCount++
                         if (score < 4) {
@@ -209,10 +209,10 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                             let role = ""
                             if (profile.isTeacher == true) {
-                                let roleData = schoolModelClasses.findOne({ _id: item?.classeId })
+                                let roleData = await schoolModelClasses.findOne({ _id: item?.classeId })
                                 role = roleData?.title
                             } else {
-                                let roleData = schoolModelMatters.findOne({ _id: item?.matterId })
+                                let roleData = await schoolModelMatters.findOne({ _id: item?.matterId })
                                 role = roleData?.title
                             }
 
@@ -755,8 +755,6 @@ const schemaClass = new mongoose.Schema({
 
 const schemaMatter = new mongoose.Schema({
     title: String,
-    matterId: String,
-    classeId: String,
     registerTime: Number,
 })
 
