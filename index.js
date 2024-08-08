@@ -197,7 +197,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let score = 0
                     let tasksCount = 0
 
-                    tasksTurma.forEach(async (item, index) => {
+                    for (const item of tasksTurma) {
                         score++
                         tasksCount++
                         if (score < 4) {
@@ -207,7 +207,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                             if (item.type == "Prova") icon = "🔴 "
                             if (item.type == "Outro") icon = "⚪ "
 
-                            let role = ""
+                            var role = ""
                             if (profile.isTeacher == true) {
                                 let roleData = await schoolModelClasses.findOne({ _id: item?.classeId })
                                 role = roleData?.title
@@ -224,7 +224,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                                 text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
                             }
                         }
-                    })
+                    }
 
                     if (tasksCount > 3) {
                         let newCount = tasksCount - 3
