@@ -269,11 +269,6 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 })
             })
         }
-
-        sendNotification(4)
-
-        //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
-
         
         console.log(`🟢 | Sistema de Notificações iniciado com sucesso!`)
         setInterval(async () => {
@@ -283,8 +278,6 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             let horas = dateNow.getHours()
             let minutos = dateNow.getMinutes()
             console.log(`HORAS: ${horas}:${minutos} >================================================`)
-
-            sendNotification(5)
 
             if (horas === 4) sendNotification(0) // 04h
 
