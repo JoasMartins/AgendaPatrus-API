@@ -179,8 +179,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                         var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
 
-                    //console.log("💫 Tarefas da TURMA:")
-                    //console.log(tasksTurma)
+                    console.log("💫 Tarefas da TURMA:")
+                    console.log(tasksTurma)
 
 
 
