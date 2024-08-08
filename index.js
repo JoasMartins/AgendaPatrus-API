@@ -209,10 +209,10 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                             let role = ""
                             if (profile.isTeacher == true) {
-                                let roleData = schoolModelClasses.findOne({ _id: item.classeId })
+                                let roleData = schoolModelClasses.findOne({ _id: item?.classeId })
                                 role = roleData?.title
                             } else {
-                                let roleData = schoolModelMatters.findOne({ _id: item.matterId })
+                                let roleData = schoolModelMatters.findOne({ _id: item?.matterId })
                                 role = roleData?.title
                             }
 
@@ -262,11 +262,13 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     if (pastAlertVerify) {
                         await modelLogAlerts.findOneAndUpdate({ name: dbName }, { $set: { value: day } })
                     } else {
+                        /*s
                         new modelLogAlerts({
                             name: dbName,
                             type: "perDay",
                             value: day
                         }).save()
+                        */
                     }
                 })
             })
@@ -753,6 +755,8 @@ const schemaClass = new mongoose.Schema({
 
 const schemaMatter = new mongoose.Schema({
     title: String,
+    matterId: String,
+    classeId: String,
     registerTime: Number,
 })
 
