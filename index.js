@@ -119,7 +119,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 let schoolModelClasses = connection.model("Classe", schemaClass)
                 let schoolModelDevices = connection.model("Device", schemaDevices)
 
-                const milliseconds = Date.now() + (1000*60*60*3)
+                const milliseconds = Date.now() - (1000*60*60*3)
                 console.log("DATA AGORA ===")
                 console.log(new Date(milliseconds))
                 const days = milliseconds / (24 * 60 * 60 * 1000)
@@ -151,7 +151,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 
 
-                let tasksAll = await schoolModelTasks.find({ date: { $gt: Date.now() - 1000 * 60 } })
+                let tasksAll = await schoolModelTasks.find({ date: { $gt: milliseconds } })
                 let listTasksDiasRest = tasksAll.map((task) => {
                     let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
                     return { ...task, diasRest: diasCalculados }
