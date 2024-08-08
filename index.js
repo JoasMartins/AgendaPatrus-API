@@ -151,7 +151,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 
 
-                let tasksAll = await schoolModelTasks.find({ date: { $gt: milliseconds } })
+                let tasksAll = await schoolModelTasks.find({ date: { $gt: milliseconds - 1000*60 } })
                 let listTasksDiasRest = tasksAll.map((task) => {
                     let diasCalculados = Math.ceil((task.date - Date.now()) / (24 * 60 * 60 * 1000))
                     return { ...task, diasRest: diasCalculados }
@@ -272,7 +272,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             })
         }
 
-        sendNotification(3)
+        sendNotification(4)
 
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
 
