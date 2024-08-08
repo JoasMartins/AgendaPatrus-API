@@ -193,7 +193,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                     if (!tasksTurma[0]) return console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
 
-                    let text = "aaaa"
+                    let text = ""
                     let score = 0
                     let tasksCount = 0
 
@@ -207,6 +207,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                             if (item.type == "Prova") icon = "🔴 "
                             if (item.type == "Outro") icon = "⚪ "
 
+                            /*
                             let role = ""
                             if (profile.isTeacher == true) {
                                 let roleData = await schoolModelClasses.findOne({ _id: item?.classeId })
@@ -215,8 +216,9 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                                 let roleData = await schoolModelMatters.findOne({ _id: item?.matterId })
                                 role = roleData?.title
                             }
+                            */
 
-                            text = text + `${score}. ${icon} ${role} | ${item.title};`
+                            text = text + `${score}. ${icon} | ${item.title};`
                             if (index < tasksTurma.length - 1) {
                                 text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
                             }
