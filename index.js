@@ -270,7 +270,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             })
         }
 
-        sendNotification(4)
+        sendNotification(3)
 
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
 
