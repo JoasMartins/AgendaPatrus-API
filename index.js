@@ -193,7 +193,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                     if (!tasksTurma[0]) return console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
 
-                    let text = ""
+                    let text = "aaaa"
                     let score = 0
                     let tasksCount = 0
 
