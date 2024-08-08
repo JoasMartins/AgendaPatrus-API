@@ -119,9 +119,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                 let schoolModelClasses = connection.model("Classe", schemaClass)
                 let schoolModelDevices = connection.model("Device", schemaDevices)
 
-                const milliseconds = Date.now() - (1000*60*60*3)
-                console.log("DATA AGORA ======")
-                console.log(new Date(milliseconds))
+                const milliseconds = Date.now()// - (1000*60*60*3)
                 const days = milliseconds / (24 * 60 * 60 * 1000)
                 let day = Math.floor(days)
 
