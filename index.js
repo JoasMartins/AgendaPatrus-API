@@ -197,7 +197,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let score = 0
                     let tasksCount = 0
 
-                    tasksTurma.map(async (item, index) => {
+                    tasksTurma.forEach(async (item, index) => {
                         score++
                         tasksCount++
                         if (score < 4) {
@@ -207,18 +207,19 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                             if (item.type == "Prova") icon = "🔴 "
                             if (item.type == "Outro") icon = "⚪ "
 
-                            /*
                             let role = ""
                             if (profile.isTeacher == true) {
                                 let roleData = await schoolModelClasses.findOne({ _id: item?.classeId })
                                 role = roleData?.title
                             } else {
                                 let roleData = await schoolModelMatters.findOne({ _id: item?.matterId })
+                                console.log("ROLE DATA")
+                                console.log(item)
+                                console.log(roleData)
                                 role = roleData?.title
                             }
-                            */
 
-                            text = text + `${score}. ${icon} | ${item.title};`
+                            text = text + `${score}. ${icon} ${role} | ${item.title};`
                             if (index < tasksTurma.length - 1) {
                                 text = text + "\n" // Adiciona quebra de linha apenas se houver mais itens
                             }
