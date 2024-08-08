@@ -108,8 +108,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
         const sendNotification = async (diasRestantesSelecionado) => {
             let schools = await modelSchools.find()
             schools.map(async (school) => {
-                console.log("💫 Escola:")
-                console.log(school?.school)
+                //console.log("💫 Escola:")
+                //console.log(school?.school)
                 const connection = connectSchool(school?.school);
                 let schoolModelStudents = connection.model("Student", schemaUsers)
                 let schoolModelTeachers = connection.model("Teacher", schemaUsers)
@@ -143,8 +143,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     profiles = profilesStudents.concat(profilesTeachers)
                 }
 
-                console.log("💫 USERS a NOTIFICAR:")
-                console.log(profiles)
+                //console.log("💫 USERS a NOTIFICAR:")
+                //console.log(profiles)
 
 
 
@@ -164,23 +164,23 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
                 let tasks = tasksComDoc.map(task => task._doc)
 
-                console.log("💫 Tarefas:")
-                console.log(tasks)
+                //console.log("💫 Tarefas:")
+                //console.log(tasks)
 
                 profiles.map(async (profile) => {
-                    console.log("💫 Usuario:")
-                    console.log(profile.roleId)
+                    //console.log("💫 Usuario:")
+                    //console.log(profile.roleId)
                     if (profile?.isTeacher == true) {
                         var tasksTurma = tasks.filter(task => task.matterId == profile.roleId)
                     } else {
-                        console.log("💫 VERIFICAÇÃO DE VALORES:")
-                        console.log(profile)
-                        console.log(`${tasks[0]?.classeId} ======= ${profile.roleId}`)
+                        //console.log("💫 VERIFICAÇÃO DE VALORES:")
+                        //console.log(profile)
+                        //console.log(`${tasks[0]?.classeId} ======= ${profile.roleId}`)
                         var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
 
-                    console.log("💫 Tarefas da TURMA:")
-                    console.log(tasksTurma)
+                    //console.log("💫 Tarefas da TURMA:")
+                    //console.log(tasksTurma)
 
 
 
@@ -241,6 +241,12 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                         headings: { "en": headText },
                         contents: { "en": text },
                     }
+
+                    console.log("HEADER =======")
+                    console.log(headers)
+
+                    console.log("DATA =======")
+                    console.log(data)
 
                     axios.post('https://onesignal.com/api/v1/notifications', data, { headers })
                         .then((respon) => console.log(`[🔔✅] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
