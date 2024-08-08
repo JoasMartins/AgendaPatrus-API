@@ -274,7 +274,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
         //  ATENÇÃO! LIBERAR setinterval PARA O LANÇAMENTO FINAL!!!
 
-        /*
+        
         console.log(`🟢 | Sistema de Notificações iniciado com sucesso!`)
         setInterval(async () => {
             let formattedDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
@@ -297,7 +297,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             if (horas === 19) sendNotification(7) // 19h
             if (horas === 20) sendNotification(10)// 20h
         }, 1000 * 60 * 2)
-        */
+        
     })
     .catch((err) => {
         console.log(err)
