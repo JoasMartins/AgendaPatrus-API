@@ -182,8 +182,8 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                         var tasksTurma = tasks.filter(task => task.classeId == profile.roleId)
                     }
 
-                    console.log("💫 Tarefas da TURMA:")
-                    console.log(tasksTurma)
+                    //console.log("💫 Tarefas da TURMA:")
+                    //console.log(tasksTurma)
 
 
 
@@ -215,9 +215,6 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                                 role = roleData?.title
                             } else {
                                 let roleData = await schoolModelMatters.findOne({ _id: item?.matterId })
-                                console.log("ROLE DATA")
-                                console.log(item)
-                                console.log(roleData)
                                 role = roleData?.title
                             }
 
@@ -250,12 +247,6 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                         contents: { "en": text },
                     }
 
-                    console.log("HEADER =======")
-                    console.log(headers)
-
-                    console.log("DATA =======")
-                    console.log(data)
-
                     axios.post('https://onesignal.com/api/v1/notifications', data, { headers })
                         .then((respon) => console.log(`[🔔✅] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Notificação enviada com sucesso.`))
                         .catch((error) => console.error(`[🔔❌] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Erro ao enviar a notificação!`, error.message))
@@ -267,13 +258,13 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     if (pastAlertVerify) {
                         await modelLogAlerts.findOneAndUpdate({ name: dbName }, { $set: { value: day } })
                     } else {
-                        /*s
+                        
                         new modelLogAlerts({
                             name: dbName,
                             type: "perDay",
                             value: day
                         }).save()
-                        */
+                        
                     }
                 })
             })
