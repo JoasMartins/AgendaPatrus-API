@@ -196,8 +196,10 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let text = ""
                     let score = 0
                     let tasksCount = 0
+                    let index = 0
 
                     for (const item of tasksTurma) {
+                        index++
                         score++
                         tasksCount++
                         if (score < 4) {
