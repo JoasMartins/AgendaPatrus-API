@@ -106,6 +106,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
 
 
         const sendNotification = async (diasRestantesSelecionado) => {
+            console.log(`[⭐] Verificando notificações de tarefas para ${diasRestantesSelecionado} dia(s) restante(s).`)
             let schools = await modelSchools.find()
             schools.map(async (school) => {
                 //console.log("💫 Escola:")
@@ -191,7 +192,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
                     let playerId = device?.deviceId
 
 
-                    if (!tasksTurma[0]) return console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
+                    if (!tasksTurma[0]) return //console.log(`[📵] Dias restantes: ${diasRestantesSelecionado} | ${profile.fullname} | Nenhuma tarefa para a turma.`)
 
                     let text = ""
                     let score = 0
@@ -277,7 +278,7 @@ mongoose.connect(process.env.DATABASE_URL + "/GLOBAL", options)
             //dateNow.setHours(4)
             let horas = dateNow.getHours()
             let minutos = dateNow.getMinutes()
-            console.log(`HORAS: ${horas}:${minutos} >================================================`)
+            //console.log(`HORAS: ${horas}:${minutos} >================================================`)
 
             if (horas === 4) sendNotification(0) // 04h
 
